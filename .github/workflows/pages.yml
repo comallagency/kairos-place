@@ -1,0 +1,36 @@
+name: Pages
+
+# Publie `site/` sur GitHub Pages. Rien n'est construit : la page est du HTML
+# statique écrit à la main, et une chaîne de construction serait une pièce de
+# plus à maintenir pour un fichier.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Une seule publication à la fois, et on ne coupe pas celle qui est en cours :
+# une page à moitié publiée est pire qu'une page en retard.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publier:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deploiement
+        uses: actions/deploy-pages@v4
