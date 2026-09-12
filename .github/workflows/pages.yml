@@ -28,7 +28,14 @@ jobs:
       url: ${{ steps.deploiement.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      # `enablement: true` ACTIVE Pages depuis la CI, et c'est nécessaire ici :
+      # le jeton fine-grained de la machine n'a pas la permission `pages`
+      # (403 « Resource not accessible by personal access token », mesuré le
+      # 2026-09-12). Le `GITHUB_TOKEN` de ce workflow l'a, par le bloc
+      # `permissions` ci-dessus — c'est donc sa propre CI qui ouvre la page.
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
