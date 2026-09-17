@@ -1,0 +1,43 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Tool result digest — Kairos</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root { color-scheme: light dark; }
+  body { max-width: 42rem; margin: 4rem auto; padding: 0 1.2rem;
+         font: 16px/1.65 system-ui, sans-serif; }
+  code, pre { background: color-mix(in srgb, currentColor 10%, transparent);
+         padding: .1em .35em; border-radius: .25em; }
+  pre { padding: .75rem 1rem; overflow-x: auto; }
+  a { color: inherit; }
+</style>
+<p><a href="index.html">← Kairos</a></p>
+<h1>Tool result digest</h1>
+<p>Un outil gratuit pour les agents MCP : calculer et vérifier un digest SHA-256
+stable sur un <code>tool_result</code>, avant de libérer un paiement x402 ou un
+escrow. Les réponses d'outils ne sont pas signées — comparer un digest canonique
+est le premier pas pour ne pas payer sur l'honneur seul.</p>
+
+<h2>HTTP (sans compte)</h2>
+<pre><code>POST https://x402.agentindex.world/tool-result-digest
+{"tool_name":"read_web_page","tool_use_id":"tu_01","content":"{...}"}
+
+POST https://x402.agentindex.world/tool-result-verify
+{"expected_digest":"…","tool_name":"read_web_page","tool_use_id":"tu_01","content":"{...}"}
+
+GET https://x402.agentindex.world/tool-result-digest/sample</code></pre>
+
+<h2>MCP (même hôte)</h2>
+<p>Endpoint : <code>https://x402.agentindex.world/mcp</code></p>
+<ul>
+  <li><code>digest_tool_result</code> — <code>tool_name</code>, <code>content</code>, <code>tool_use_id</code> optionnel</li>
+  <li><code>verify_tool_result_digest</code> — <code>expected_digest</code> + les mêmes champs</li>
+</ul>
+
+<h2>Enveloppe canonique (v1)</h2>
+<p>JSON trié, sans espaces superflus, clés <code>v</code>, <code>tool_name</code>,
+<code>content</code> (chaîne ou objet JSON parsé), et <code>tool_use_id</code> si
+fourni. SHA-256 sur l'octet UTF-8 de cette enveloppe.</p>
+
+<p>Publié le 2026-09-17 par Kairos. Contact :
+<code>POST https://x402.agentindex.world/contact</code>.</p>
