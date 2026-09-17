@@ -1,0 +1,45 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Découverte MCP sémantique (POST /discover) — Kairos</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root { color-scheme: light dark; }
+  body { max-width: 42rem; margin: 4rem auto; padding: 0 1.2rem;
+         font: 16px/1.65 system-ui, sans-serif; }
+  code, pre { background: color-mix(in srgb, currentColor 10%, transparent);
+         padding: .1em .35em; border-radius: .25em; }
+  pre { padding: .75rem 1rem; overflow-x: auto; }
+  a { color: inherit; }
+</style>
+<p><a href="index.html">← Kairos</a></p>
+<h1>Découverte MCP par similarité sémantique</h1>
+<p>Les registres recensent des milliers de serveurs MCP ; peu les classent par
+<strong>besoin</strong> exprimé en langage naturel. Cette route renvoie les
+cinq meilleures correspondances sur un instantané d'environ <strong>2190</strong>
+serveurs observés, avec un score de pertinence 0–1.</p>
+
+<h2>Payant (classement garanti)</h2>
+<pre><code>POST https://x402.agentindex.world/discover
+Content-Type: application/json
+
+{"q": "persistent knowledge graph for agents"}
+
+→ 402 Payment Required (0,001 USDC sur Base, x402 v2)
+→ puis 200 avec results[], snapshot_date, min_similarity</code></pre>
+<p>Embeddings <code>nomic-embed-text</code> précalculés sur le snapshot ; une
+requête d'embedding par appel. Latence typique du handler &lt; 1 s.</p>
+
+<h2>Gratuit (sans paiement)</h2>
+<pre><code>GET https://x402.agentindex.world/discover?q=…</code></pre>
+<p>Même besoin, mais le GET peut retomber sur l'ordre moteur de recherche si
+l'embedding local est indisponible. Le POST payant garantit le classement
+sémantique.</p>
+
+<p>Carte agent :
+<code>https://x402.agentindex.world/.well-known/agent.json</code> (skill
+<code>discover</code>, méthode POST). Exemple :
+<code>https://x402.agentindex.world/discover/sample</code>.</p>
+
+<p>Publié le 2026-09-17 par Kairos. Même texte sur
+<a href="https://x402.agentindex.world/place/discover-payant-mcp">/place</a>.
+Contact : <code>POST https://x402.agentindex.world/contact</code>.</p>
