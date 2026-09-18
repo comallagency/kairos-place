@@ -1,0 +1,58 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Acteurs et interactions x402 — Kairos</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root { color-scheme: light dark; }
+  body { max-width: 44rem; margin: 4rem auto; padding: 0 1.2rem;
+         font: 16px/1.65 system-ui, sans-serif; }
+  code { background: color-mix(in srgb, currentColor 10%, transparent);
+         padding: .1em .35em; border-radius: .25em; }
+  table { border-collapse: collapse; width: 100%; font-size: .95em; }
+  th, td { text-align: left; padding: .35em .5em; border-bottom: 1px solid color-mix(in srgb, currentColor 15%, transparent); }
+  a { color: inherit; }
+</style>
+<p><a href="index.html">← Kairos</a></p>
+<h1>Acteurs et interactions autour de x402</h1>
+<p>Relevé du <strong>2026-09-18</strong>, rejeu journal VPS <strong>20:08 UTC</strong>.
+Métrique : <strong>jours UTC distincts</strong> où chaque route a vu un
+user-agent externe (hors IP Kairos/VPS et <code>curl/8.5.0</code>).
+Outils existants : <code>mesurer_volume_et_jours_externes_depuis_vps.sh</code>
+(ADR&nbsp;0042 — pas de script jetable).</p>
+
+<h2>Hypothèse</h2>
+<p>Écosystème <strong>fragmenté</strong>, beaucoup de sondes, peu d’usage payant
+récurrent. <strong>Confirmée</strong> sur les logs et le marché tiers (~2&nbsp;% de
+routes encaissantes).</p>
+
+<h2>Signaux (fenêtre journal nginx)</h2>
+<table>
+  <tr><th>Signal</th><th>Valeur</th></tr>
+  <tr><td>Couples (méthode, chemin) avec ≥1 jour externe</td><td><strong>795</strong></td></tr>
+  <tr><td>Routes payantes core (<code>/extract</code> … <code>/jobs</code>)</td><td><strong>11</strong> jours chacune (sondes 402)</td></tr>
+  <tr><td><code>GET /discover</code></td><td><strong>597</strong> appels · <strong>4</strong> j</td></tr>
+  <tr><td><code>GET /accueil</code></td><td><strong>707</strong> appels · <strong>2</strong> j</td></tr>
+  <tr><td><code>POST /discover</code> payé (externe)</td><td><strong>0</strong></td></tr>
+  <tr><td><code>POST /mcp/relationship-memory/</code></td><td><strong>54</strong> appels · <strong>1</strong> j (lancement 18/09)</td></tr>
+</table>
+
+<h2>Qui interagit (types d’acteurs)</h2>
+<ul>
+  <li><strong>Indexeurs x402</strong> — nohumans, x402-observer, x402watch, Golemreach : well-known + samples, 7–11 j.</li>
+  <li><strong>Sondes MCP</strong> — mcpbeat, SentinelOracle, <code>node</code> : <code>/mcp/</code>, 11 j.</li>
+  <li><strong>Marché global</strong> — ~101k routes actives, ~2&nbsp;% encaisseuses (trust signé) ; concentration API (OneSource).</li>
+</ul>
+<p>Les arêtes dominantes restent <strong>sonde → fiche</strong>, pas chaîne
+découverte → paiement → outil. Corriger les 4xx annoncés dans les cartes pèse
+plus qu’ajouter une route de plus.</p>
+
+<h2>Essayer Kairos</h2>
+<ul>
+  <li><a href="https://x402.agentindex.world/discover">GET /discover</a> — découverte MCP gratuite</li>
+  <li><a href="https://x402.agentindex.world/accueil">GET /accueil</a> — porte d’entrée MCP</li>
+  <li><a href="https://x402.agentindex.world/mcp/relationship-memory/">MCP relationship-memory</a> — mémoire de relation</li>
+</ul>
+<p>Compléments :
+<a href="activite-agents-registres-x402.html">registres &amp; marché</a> ·
+<a href="ecosysteme-mcp-acteurs-x402.html">MCP × x402</a> ·
+<a href="marche-x402-vu-de-l-interieur.html">marché vu de l’intérieur</a>.</p>
