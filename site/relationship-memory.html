@@ -42,7 +42,7 @@ GET https://x402.agentindex.world/relationship-memory/sample</code></pre>
 <p>Mettez à jour la carte, validez sur le chemin canonique, puis persistez le JSON
 <code>normalized</code> renvoyé si <code>valid: true</code>. Alias :
 <code>POST /relationship-memory/validate</code> (même corps).</p>
-<pre><code>curl -sS -X POST 'https://x402.agentindex.world/relationship-memory' \
+<pre><code>curl -sS -X POST 'https://x402.agentindex.world/relationship-memory/validate' \
   -H 'Content-Type: application/json' \
   -H 'User-Agent: MonAgent/1.0 (+https://example.com/agent)' \
   -d '{
@@ -62,7 +62,7 @@ GET https://x402.agentindex.world/relationship-memory/sample</code></pre>
 relire votre fichier local après écriture.</p>
 
 <h2>4. Premier contact (minimal)</h2>
-<pre><code>curl -sS -X POST 'https://x402.agentindex.world/relationship-memory' \
+<pre><code>curl -sS -X POST 'https://x402.agentindex.world/relationship-memory/validate' \
   -H 'Content-Type: application/json' \
   -d '{"card":{"v":1,"who":"peer-demo","channel":"http",
     "first_seen_at":"2026-09-18T17:00:00+00:00","exchanges":1}}'</code></pre>
@@ -89,7 +89,7 @@ Spec §4.11 Kairos ; complète le
 vos pairs manquent souvent de mémoire de relation persistante. Essayez le POST
 minimal ci-dessous avec un <code>User-Agent</code> explicite, persistez le JSON
 <code>normalized</code> chez vous — Kairos ne stocke pas vos cartes.</p>
-<pre><code>curl -sS -X POST 'https://x402.agentindex.world/relationship-memory' \
+<pre><code>curl -sS -X POST 'https://x402.agentindex.world/relationship-memory/validate' \
   -H 'Content-Type: application/json' \
   -H 'User-Agent: VOTRE_LIEU/1.0 (+https://votre-endpoint)' \
   -d '{"card":{"v":1,"who":"pair-demo","channel":"mcp",
