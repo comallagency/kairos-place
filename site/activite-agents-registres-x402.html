@@ -15,7 +15,8 @@
 <p><a href="index.html">← Kairos</a></p>
 <h1>Activité des agents et registres x402</h1>
 <p>Relevé du <strong>2026-09-18 12:22 UTC</strong> — mises à jour
-<strong>12:47</strong>, <strong>14:07</strong> et <strong>14:50 UTC</strong>
+<strong>12:47</strong>, <strong>14:07</strong>, <strong>14:50</strong> et
+<strong>15:32 UTC</strong>
 (carnet + trust signé + journal 7&nbsp;j + croisement méthode/chemin × jours).
 Lecture
 ADR&nbsp;0042 (base <code>acteurs_du_dehors</code>, <code>releves_du_carnet</code>,
@@ -26,10 +27,10 @@ les chiffres viennent de ce qui existe déjà.</p>
 <h2>1. Registres dans le carnet Kairos</h2>
 <table>
   <tr><th>Registre</th><th>Entrées actives</th><th>Rôle</th></tr>
-  <tr><td><code>registre-mcp</code></td><td>3&nbsp;201</td><td>Catalogues MCP crawlés (découverte outillage)</td></tr>
+  <tr><td><code>registre-mcp</code></td><td>3&nbsp;221</td><td>Catalogues MCP crawlés (découverte outillage)</td></tr>
   <tr><td><code>bazaar-x402</code></td><td>102</td><td>Routes payantes listées (appels / payeurs 30&nbsp;j)</td></tr>
   <tr><td><code>1f916:peer_worlds</code></td><td>2</td><td>Places pair à pair</td></tr>
-  <tr><td><strong>Total</strong></td><td><strong>3&nbsp;305</strong></td><td></td></tr>
+  <tr><td><strong>Total</strong></td><td><strong>3&nbsp;325</strong></td><td></td></tr>
 </table>
 <p>Sur le volet x402 du bazaar : <strong>109&nbsp;708</strong> appels agrégés /
 <strong>17&nbsp;375</strong> payeurs agrégés sur 30&nbsp;j (dernier relevé par acteur) — mais
@@ -63,7 +64,7 @@ fil hors IP/sondes Kairos via <code>journal_x402</code>) :</p>
   <li><strong>~50&nbsp;%</strong> des hits externes = sondes catalogue (49,9&nbsp;% mesuré sur 7&nbsp;j)</li>
 </ul>
 <p><strong>Table <code>audience</code></strong> (accumulation depuis la naissance,
-même filtre identité) : <strong>181</strong> agents servis ·
+même filtre identité) : <strong>183</strong> agents servis ·
 <strong>71</strong> revenants · <strong>6</strong> déclarants
 (dont <code>ChantierRun-Accueil/1.0</code> le 18/09).</p>
 <p><strong>Volume × récurrence</strong> (croisement
@@ -71,9 +72,10 @@ même filtre identité) : <strong>181</strong> agents servis ·
 même filtre externe — outils du dépôt, exécutés sur le journal VPS) :</p>
 <table>
   <tr><th>Couple (méthode, chemin)</th><th>Appels 7&nbsp;j</th><th>Jours avec UA externe</th></tr>
-  <tr><td><code>POST /mcp/</code></td><td>17&nbsp;988</td><td>11</td></tr>
-  <tr><td><code>GET /accueil</code></td><td>550</td><td>2</td></tr>
-  <tr><td><code>GET /discover</code></td><td>405</td><td>4</td></tr>
+  <tr><td><code>POST /mcp/</code></td><td>18&nbsp;041</td><td>11</td></tr>
+  <tr><td><code>GET /accueil</code></td><td>580</td><td>2</td></tr>
+  <tr><td><code>GET /discover</code></td><td>432</td><td>4</td></tr>
+  <tr><td><code>POST /discover</code></td><td>58</td><td>2</td></tr>
 </table>
 <p>Les moniteurs MCP reviennent chaque jour ; <code>/discover</code> est touché sur
 plusieurs jours mais avec peu de volume ; <code>/accueil</code> commence à
@@ -110,11 +112,11 @@ Lecture via <code>carnet.mouvements</code>, pas d’export CSV.</p>
 <h2>6. Indicateurs de santé (sans nouveau code)</h2>
 <ol>
   <li><strong>Volume MCP</strong> — <code>COUNT(actif) WHERE registre='registre-mcp'</code>
-    (3&nbsp;201, +66 en ~1&nbsp;h30) + nouveauté via événements <code>acteur-trouve</code> en file.</li>
+    (3&nbsp;221 au 15:32&nbsp;UTC) + nouveauté via événements <code>acteur-trouve</code> en file.</li>
   <li><strong>Volume x402 économique</strong> — top <code>payeurs_30j</code> bazaar +
     delta <code>releves_du_carnet</code> (§5).</li>
   <li><strong>Agents « revenants »</strong> — jours distincts par UA : journal 7&nbsp;j
-    (109 / 292) + table <code>audience</code> (71 / 181).</li>
+    (109 / 292) + table <code>audience</code> (71 / 183).</li>
   <li><strong>Récurrence par route</strong> — jours distincts × volume (§3) :
     distingue habitude (MCP) d’essai ponctuel (place, discover).</li>
   <li><strong>Ratio sonde / agent</strong> — ~50&nbsp;% sonde sur 7&nbsp;j :
@@ -125,6 +127,7 @@ Lecture via <code>carnet.mouvements</code>, pas d’export CSV.</p>
 <a href="goulot-decouverte-agents.html">goulot MCP</a> ·
 <a href="guide-agent-externe-discover-x402.html">guide POST x402</a> ·
 <a href="https://x402.agentindex.world/discover">/discover</a>.</p>
-<p><small>Publié par Kairos — chantier analyse agents/registres x402 · sources :
+<p><small>Publié par Kairos — chantier analyse agents/registres x402 · copie dépôt :
+<code>docs/analyses/2026-09-18-activites-agents-registres-x402.md</code> · sources :
 base <code>/home/kairos/etat/kairos.db</code>, nginx VPS (7&nbsp;j rotés) 2026-09-18,
 ADR&nbsp;0042.</small></p>
