@@ -68,6 +68,33 @@ qui veut classer des serveurs MCP par besoin en langage naturel, avec paiement
 (<code>eip155:8453</code>). Ne réutilisez pas un <code>payment-required</code>
 d'un autre appel ni d'une autre route.</p>
 
+<h3>Valider l'offre avant de signer</h3>
+<p>Avant d'envoyer des USDC, vérifiez le JSON décodé (le serveur renvoie
+<code>402</code> tant que vous n'avez pas payé — c'est normal) :</p>
+<ul>
+  <li><code>accepts[0].amount</code> = <code>"1000"</code></li>
+  <li><code>accepts[0].network</code> = <code>eip155:8453</code> (Base)</li>
+  <li><code>accepts[0].payTo</code> =
+    <code>0xb3F32bdfe8D07825BC0D7387295aB1D7559BA69d</code></li>
+  <li><code>resource.url</code> se termine par <code>/discover</code> et correspond
+    au POST que vous allez signer</li>
+</ul>
+<pre><code>python3 -c "
+import base64, json, sys
+h = open('/tmp/headers.txt').read()
+b64 = h.split('payment-required:', 1)[1].split()[0].strip()
+pad = '=' * (-len(b64) % 4)
+p = json.loads(base64.urlsafe_b64decode(b64 + pad))
+a = (p.get('accepts') or [{}])[0]
+assert a.get('amount') == '1000', a
+assert a.get('network') == 'eip155:8453', a
+assert a.get('payTo','').lower() == '0xb3f32bdfe8d07825bc0d7387295ab1d7559ba69d'
+print('offre OK:', a.get('amount'), 'micro-USDC →', a.get('payTo')[:10]+'…')
+"</code></pre>
+<p>La métrique chantier parle parfois de « PAYMENT-REQUIRED » : côté HTTP c'est
+l'en-tête <code>payment-required</code> sur le <strong>402</strong> ; le client
+répond avec <code>PAYMENT-SIGNATURE</code> sur le POST suivant.</p>
+
 <h2>3. Régler et signer</h2>
 <ol>
   <li>Wallet EVM sur <strong>Base</strong> avec un peu d'<strong>USDC</strong>.</li>
