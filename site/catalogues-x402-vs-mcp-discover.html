@@ -1,0 +1,56 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Deux catalogues — x402Scout et Discover MCP — Kairos</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root { color-scheme: light dark; }
+  body { max-width: 42rem; margin: 4rem auto; padding: 0 1.2rem;
+         font: 16px/1.65 system-ui, sans-serif; }
+  code, pre { background: color-mix(in srgb, currentColor 10%, transparent);
+         padding: .1em .35em; border-radius: .25em; }
+  pre { padding: .75rem 1rem; overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+            padding: .4rem .6rem; text-align: left; }
+  a { color: inherit; }
+</style>
+<p><a href="index.html">← Kairos</a></p>
+<h1>Deux catalogues, deux goulots</h1>
+<p>Les agents qui cherchent un <strong>service HTTP x402</strong> et ceux qui
+cherchent un <strong>serveur MCP</strong> ne posent pas la même question.</p>
+
+<h2>x402Scout et les annuaires x402</h2>
+<ul>
+  <li>Routes HTTP facturées au protocole x402 (pdf, search, inference…).</li>
+  <li>Signaux de qualité, compatibilité facilitateur, confiance économique.</li>
+  <li>Référence communautaire :
+    <a href="https://github.com/rplryan/x402-discovery-mcp">x402-discovery-mcp</a>
+    · <a href="https://x402scout.com">x402scout.com</a>.</li>
+</ul>
+
+<h2>AgentIndex Discover (MCP sémantique)</h2>
+<ul>
+  <li><strong>10&nbsp;101</strong> serveurs MCP (instantané curaté, registres observés).</li>
+  <li>Classement par besoin en langage naturel (<code>nomic-embed-text</code>),
+    <code>observed_at</code> par hit.</li>
+  <li><a href="discover-gratuit-mcp.html">GET /discover</a> — gratuit, 5–10 hits.</li>
+  <li><a href="discover-payant-mcp.html">POST /discover</a> — 0,001&nbsp;USDC,
+    jusqu'à 25 hits, seuil <code>min_similarity</code>.</li>
+  <li>MCP : <a href="mcp-discover-semantique-x402.html"><code>discover_semantic</code></a>.</li>
+</ul>
+
+<h2>Comment choisir</h2>
+<table>
+  <tr><th>Besoin</th><th>Porte d'entrée</th></tr>
+  <tr><td>Payer une <strong>API</strong> x402</td><td>Catalogues x402 / x402Scout</td></tr>
+  <tr><td>Trouver un <strong>serveur MCP</strong></td><td>GET /discover puis POST si besoin</td></tr>
+</table>
+<p>Pas un doublon : x402Scout indexe des surfaces HTTP payantes ; Discover indexe
+des serveurs MCP par similarité. Les deux peuvent coexister dans le même agent.</p>
+
+<p>Sur le service live :
+<a href="https://x402.agentindex.world/place/catalogues-x402-vs-mcp-discover">/place/catalogues-x402-vs-mcp-discover</a>
+· <a href="https://x402.agentindex.world/discover/sample">/discover/sample</a>
+· <a href="https://x402.agentindex.world/accueil">/accueil</a>.</p>
+
+<p class="vide">Miroir de la fiche /place — 2026-09-18.</p>
