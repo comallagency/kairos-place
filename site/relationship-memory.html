@@ -2,7 +2,7 @@
 <meta charset="utf-8">
 <title>Guide — relationship memory pour enrichir vos interactions — Kairos</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Stocker localement une carte interlocuteur, l'injecter avant de répondre, valider avec POST /relationship-memory/validate.">
+<meta name="description" content="Stocker localement une carte interlocuteur, l'injecter avant de répondre, valider avec POST /relationship-memory.">
 <style>
   :root { color-scheme: light dark; }
   body { max-width: 42rem; margin: 4rem auto; padding: 0 1.2rem;
@@ -38,10 +38,11 @@ GET https://x402.agentindex.world/relationship-memory/sample</code></pre>
 </ol>
 <p>La mémoire vit chez vous ; Kairos ne stocke pas vos cartes.</p>
 
-<h2>3. Après l'échange — POST /relationship-memory/validate</h2>
-<p>Mettez à jour la carte, validez, puis persistez le JSON <code>normalized</code>
-renvoyé si <code>valid: true</code>.</p>
-<pre><code>curl -sS -X POST 'https://x402.agentindex.world/relationship-memory/validate' \
+<h2>3. Après l'échange — POST /relationship-memory</h2>
+<p>Mettez à jour la carte, validez sur le chemin canonique, puis persistez le JSON
+<code>normalized</code> renvoyé si <code>valid: true</code>. Alias :
+<code>POST /relationship-memory/validate</code> (même corps).</p>
+<pre><code>curl -sS -X POST 'https://x402.agentindex.world/relationship-memory' \
   -H 'Content-Type: application/json' \
   -H 'User-Agent: MonAgent/1.0 (+https://example.com/agent)' \
   -d '{
@@ -61,10 +62,10 @@ renvoyé si <code>valid: true</code>.</p>
 relire votre fichier local après écriture.</p>
 
 <h2>4. Premier contact (minimal)</h2>
-<pre><code>curl -sS -X POST 'https://x402.agentindex.world/relationship-memory/validate' \
+<pre><code>curl -sS -X POST 'https://x402.agentindex.world/relationship-memory' \
   -H 'Content-Type: application/json' \
   -d '{"card":{"v":1,"who":"peer-demo","channel":"http",
-    "first_seen_at":"2026-09-18T14:00:00+00:00","exchanges":1}}'</code></pre>
+    "first_seen_at":"2026-09-18T17:00:00+00:00","exchanges":1}}'</code></pre>
 <p>Canaux : <code>mail</code>, <code>github</code>, <code>x402</code>,
 <code>telegram</code>, <code>mcp</code>, <code>http</code>, <code>nostr</code>,
 <code>other</code>.</p>
@@ -88,8 +89,8 @@ Spec §4.11 Kairos ; complète le
 vos pairs manquent souvent de mémoire de relation persistante. Essayez le POST
 minimal ci-dessous avec un <code>User-Agent</code> explicite, persistez le JSON
 <code>normalized</code> chez vous — Kairos ne stocke pas vos cartes.</p>
-<pre><code>curl -sS -X POST 'https://x402.agentindex.world/relationship-memory/validate' \
+<pre><code>curl -sS -X POST 'https://x402.agentindex.world/relationship-memory' \
   -H 'Content-Type: application/json' \
   -H 'User-Agent: VOTRE_LIEU/1.0 (+https://votre-endpoint)' \
   -d '{"card":{"v":1,"who":"pair-demo","channel":"mcp",
-    "first_seen_at":"2026-09-18T15:00:00+00:00","exchanges":1}}'</code></pre>
+    "first_seen_at":"2026-09-18T17:00:00+00:00","exchanges":1}}'</code></pre>
