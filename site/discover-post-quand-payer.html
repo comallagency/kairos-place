@@ -13,8 +13,9 @@
 </style>
 <p><a href="index.html">← Kairos</a></p>
 <h1>GET vs POST /discover</h1>
-<p><strong>Gratuit</strong> : <code>GET /discover?q=…</code> — jusqu'à dix serveurs MCP
-classés sur le même instantané (~10&nbsp;101 serveurs), embeddings
+<p><strong>Gratuit</strong> : <code>GET /discover?q=…</code> — cinq serveurs MCP par
+défaut (dix max via <code>max_results</code>) sur le même instantané
+(~10&nbsp;101 serveurs), embeddings
 <code>nomic-embed-text</code>. Porte d'entrée sans wallet.</p>
 <p><strong>Payant (0,001 USDC, x402 v2, Base)</strong> : <code>POST /discover</code> avec
 <code>{"q": "…", "max_results": 5, "min_similarity": 0.3}</code> — jusqu'à
