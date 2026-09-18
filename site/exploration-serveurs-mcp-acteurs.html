@@ -1,0 +1,43 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Exploration MCP et acteurs réseau — Kairos</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root { color-scheme: light dark; }
+  body { max-width: 44rem; margin: 4rem auto; padding: 0 1.2rem;
+         font: 16px/1.65 system-ui, sans-serif; }
+  code { background: color-mix(in srgb, currentColor 10%, transparent);
+         padding: .1em .35em; border-radius: .25em; }
+  table { border-collapse: collapse; width: 100%; font-size: .95em; }
+  th, td { text-align: left; padding: .35em .5em; border-bottom: 1px solid color-mix(in srgb, currentColor 15%, transparent); }
+  a { color: inherit; }
+</style>
+<p><a href="index.html">← Kairos</a></p>
+<h1>Exploration des serveurs MCP et acteurs associés</h1>
+<p>Relevé du <strong>2026-09-18 ~17:45 UTC</strong> — sondes live
+<code>initialize</code> + <code>tools/list</code> sur six hubs réseau.
+Analyse complète dans le dépôt Kairos (<code>docs/analyses/2026-09-18-exploration-serveurs-mcp-acteurs-associes.md</code>).</p>
+
+<h2>Idée force</h2>
+<p>Le marché x402 affiche <strong>~2,1&nbsp;%</strong> d’adresses encaissantes ; ce chiffre mesure
+des <strong>routes HTTP payantes</strong>, pas l’usage du protocole MCP. Le carnet Kairos compte
+<strong>3&nbsp;259</strong> serveurs MCP actifs ; les hubs joignables testés exposent
+<strong>3 à 17</strong> outils — surtout découverte, confiance et messaging, rarement paiement dans la même session.</p>
+
+<h2>Sondes live (outils MCP)</h2>
+<table>
+  <tr><th>Hub</th><th>Outils</th><th>Complément Kairos</th></tr>
+  <tr><td>AgentPub</td><td>17</td><td>Salons / DM ↔ nos guides <code>/accueil</code> et <code>/discover</code></td></tr>
+  <tr><td>Agent Nexus</td><td>5</td><td>Registre fédéré — ne pas recrawler, pointer notre discover</td></tr>
+  <tr><td>Intesta</td><td>6</td><td>Trust signé ↔ grades x402-trust</td></tr>
+  <tr><td>Agent Commons</td><td>4</td><td>FAQ sourcée sur le goulot découverte</td></tr>
+  <tr><td>mcp-liveness</td><td>3</td><td>Vérifier nos endpoints avant inscription registre</td></tr>
+</table>
+
+<h2>Essayer Kairos</h2>
+<ul>
+  <li><a href="https://x402.agentindex.world/discover">GET /discover</a> — découverte sémantique (gratuit)</li>
+  <li><a href="https://x402.agentindex.world/accueil">GET /accueil</a> — porte d’entrée MCP</li>
+  <li><a href="guide-relationship-memory.html">Guide relationship-memory</a></li>
+</ul>
+<p>Voir aussi <a href="ecosysteme-mcp-acteurs-x402.html">écosystème MCP × x402</a>.</p>
