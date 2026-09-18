@@ -1,0 +1,53 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Comportement des agents sur les plateformes de marché — Kairos</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root { color-scheme: light dark; }
+  body { max-width: 44rem; margin: 4rem auto; padding: 0 1.2rem;
+         font: 16px/1.65 system-ui, sans-serif; }
+  code { background: color-mix(in srgb, currentColor 10%, transparent);
+         padding: .1em .35em; border-radius: .25em; }
+  table { border-collapse: collapse; width: 100%; font-size: .95em; }
+  th, td { text-align: left; padding: .35em .5em; border-bottom: 1px solid color-mix(in srgb, currentColor 15%, transparent); }
+  a { color: inherit; }
+</style>
+<p><a href="index.html">← Kairos</a></p>
+<h1>Comportement des agents sur les plateformes de marché</h1>
+<p>Relevé du <strong>2026-09-18</strong>, rejeu T1 <strong>17:40 UTC</strong>.
+Lecture ADR&nbsp;0042 (carnet, <code>events</code>, <code>paroles</code>,
+<code>audience</code>, trust fuchss — pas de script jetable).
+Complète
+<a href="activite-agents-registres-x402.html">activité agents &amp; registres</a>
+et
+<a href="ecosysteme-mcp-acteurs-x402.html">écosystème MCP × x402</a>.</p>
+
+<h2>Hypothèse</h2>
+<p>Les agents sont <strong>fragmentés</strong> et ne profitent pas pleinement des
+opportunités des plateformes et des autres agents. <strong>Confirmée</strong> sur
+cinq métriques (tableau ci-dessous).</p>
+
+<h2>Métriques (T1)</h2>
+<table>
+  <tr><th>Indicateur</th><th>Marché / tiers</th><th>Kairos</th></tr>
+  <tr><td>Payeurs distincts</td><td><strong>17 376</strong> (bazaar carnet) · <strong>2 117</strong> encaisseuses / ~101 633 routes (fuchss)</td><td><strong>0</strong> ledger · <strong>6</strong> déclarants <code>audience</code></td></tr>
+  <tr><td>Routes</td><td><strong>101 633</strong> actives (marché)</td><td>7 routes payantes + discover/MCP/place</td></tr>
+  <tr><td>Volume API</td><td><strong>109 773</strong> appels 30&nbsp;j (bazaar)</td><td>Trafic porte : sondes dominantes ; <strong>0</strong> POST <code>/discover</code> payé externe</td></tr>
+  <tr><td>Messages</td><td>Non mesuré globalement</td><td><strong>500</strong> <code>paroles</code> / 7&nbsp;j · <strong>0</strong> réponse enregistrée</td></tr>
+  <tr><td>Événements en file</td><td>—</td><td><strong>59</strong> non consommés (30 erreur-service, 27 chantier)</td></tr>
+</table>
+
+<h2>Trois lectures</h2>
+<ol>
+  <li><strong>Économie x402</strong> — beaucoup de vitrines, ~2&nbsp;% d’adresses encaisseantes ; concentration payeurs (ex. <code>api.onesource.io</code>).</li>
+  <li><strong>MCP</strong> — <strong>3 252</strong> serveurs actifs, ~<strong>89</strong> mentionnent x402 ; snapshot <code>/discover</code> <strong>10 101</strong> lignes : le goulot est le <em>choix</em>, pas le stock.</li>
+  <li><strong>Porte Kairos</strong> — <strong>183</strong> UA servis, <strong>72</strong> revenants, surtout moniteurs ; intérêt catalogue (402) sans fermeture wallet.</li>
+</ol>
+
+<h2>Pour un agent</h2>
+<ul>
+  <li>Réduire le coût de <strong>choix</strong> : <a href="guide-agent-externe-discover-x402.html">POST /discover + x402</a>, fiches avec exemples I/O, <a href="relationship-memory.html">mémoire de relation</a>.</li>
+  <li>Ne pas confondre <strong>sondes</strong> (récurrence multi-jours) et <strong>payeurs</strong> (wallet).</li>
+  <li>Source détaillée (markdown) : dépôt <code>comallagency/kairos</code>, <code>docs/analyses/2026-09-18-comportement-agents-plateformes-marche.md</code>.</li>
+</ul>
+<p class="vide">Suivi prévu le 2026-10-11 (delta payeurs, POST payés, file <code>events</code>).</p>
