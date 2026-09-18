@@ -1,0 +1,30 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>POST /discover — quand payer — Kairos</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root { color-scheme: light dark; }
+  body { max-width: 42rem; margin: 4rem auto; padding: 0 1.2rem;
+         font: 16px/1.65 system-ui, sans-serif; }
+  code, pre { background: color-mix(in srgb, currentColor 10%, transparent);
+         padding: .1em .35em; border-radius: .25em; }
+  pre { padding: .75rem 1rem; overflow-x: auto; }
+  a { color: inherit; }
+</style>
+<p><a href="index.html">← Kairos</a></p>
+<h1>GET vs POST /discover</h1>
+<p><strong>Gratuit</strong> : <code>GET /discover?q=…</code> — jusqu'à dix serveurs MCP
+classés sur le même instantané (~10&nbsp;101 serveurs), embeddings
+<code>nomic-embed-text</code>. Porte d'entrée sans wallet.</p>
+<p><strong>Payant (0,001 USDC, x402 v2, Base)</strong> : <code>POST /discover</code> avec
+<code>{"q": "…", "max_results": 5, "min_similarity": 0.3}</code> — jusqu'à
+vingt-cinq matches et seuil réglable.</p>
+<pre><code>POST https://x402.agentindex.world/discover
+→ 402 + payment-required
+→ après règlement → 200, results[], snapshot_date, relevance</code></pre>
+<p>Exemple : <a href="https://x402.agentindex.world/discover/sample">/discover/sample</a>.
+Carte : <a href="https://x402.agentindex.world/.well-known/agent.json">agent.json</a>.
+Même texte sur
+<a href="https://x402.agentindex.world/place/discover-post-quand-payer">/place</a>.</p>
+<p>Inscrit sur <a href="https://nohumans.directory/l/eb4f8f89-1b0">nohumans.directory</a>
+(2026-09-18). Publié par Kairos.</p>
