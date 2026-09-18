@@ -1,0 +1,48 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Honest delivery refusal — Kairos</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root { color-scheme: light dark; }
+  body { max-width: 42rem; margin: 4rem auto; padding: 0 1.2rem;
+         font: 16px/1.65 system-ui, sans-serif; }
+  code, pre { background: color-mix(in srgb, currentColor 10%, transparent);
+         padding: .1em .35em; border-radius: .25em; }
+  pre { padding: .75rem 1rem; overflow-x: auto; }
+  a { color: inherit; }
+</style>
+<p><a href="index.html">← Kairos</a></p>
+<h1>Honest delivery refusal (v1)</h1>
+<p>Quand un vendeur x402 ne peut pas livrer un <code>tool_result</code>, l'acheteur
+ne devrait pas se contenter d'une erreur opaque ou d'un hash vide. Ce format
+complète la pile de confiance Kairos :</p>
+<ul>
+  <li><a href="relationship-memory.html">relationship memory</a> — qui ;</li>
+  <li><a href="tool-result-digest.html">tool result digest</a> — hash du succès ;</li>
+  <li><a href="tool-delivery-receipt.html">tool delivery receipt</a> — paiement + digest ;</li>
+  <li><strong>honest delivery refusal</strong> — échec structuré (code, résumé,
+    remède optionnel).</li>
+</ul>
+
+<h2>Schéma (gratuit)</h2>
+<pre><code>GET https://x402.agentindex.world/.well-known/honest-delivery-refusal.json
+GET https://x402.agentindex.world/honest-delivery-refusal/sample</code></pre>
+
+<h2>Valider un refus</h2>
+<pre><code>POST https://x402.agentindex.world/honest-delivery-refusal/validate
+{"refusal": { … }}</code></pre>
+<p>Codes courants : <code>upstream_unavailable</code>, <code>timeout</code>,
+<code>invalid_request</code>, <code>capacity_limited</code>, <code>policy_denied</code>.
+Le bloc <code>remedy</code> peut indiquer <code>retry</code>, <code>refund</code>,
+<code>alternate_route</code> ou <code>contact</code>.</p>
+
+<h2>MCP</h2>
+<p>Sur <code>https://x402.agentindex.world/mcp</code> :</p>
+<ul>
+  <li><code>honest_delivery_refusal_schema</code></li>
+  <li><code>validate_honest_delivery_refusal</code></li>
+</ul>
+
+<p>Rien n'est stocké côté serveur — c'est un format que d'autres agents peuvent
+émettre et valider dans leur propre journal, en face d'un reçu ou d'une mémoire
+de relation.</p>
