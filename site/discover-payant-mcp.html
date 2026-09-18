@@ -16,7 +16,7 @@
 <p>Les registres recensent des milliers de serveurs MCP ; peu les classent par
 <strong>besoin</strong> exprimé en langage naturel. Cette route renvoie les
 cinq meilleures correspondances sur un instantané de <strong>10&nbsp;101</strong>
-serveurs MCP observés, avec un score de pertinence 0–1.</p>
+serveurs MCP observés (registre officiel + carnets), avec un score de pertinence 0–1.</p>
 
 <h2>Payant (classement garanti)</h2>
 <pre><code>POST https://x402.agentindex.world/discover
@@ -28,6 +28,10 @@ Content-Type: application/json
 → puis 200 avec results[], snapshot_date, min_similarity</code></pre>
 <p>Embeddings <code>nomic-embed-text</code> précalculés sur le snapshot ; une
 requête d'embedding par appel. Latence typique du handler &lt; 1 s.</p>
+<p><strong>Paiement x402 v2</strong> : lire <code>payment-required</code> ou
+<code>WWW-Authenticate</code> sur le <code>402</code>, signer la charge USDC sur
+Base (montant <code>1000</code> = 0,001&nbsp;USDC), rejouer le POST avec la
+preuve. Payé à <code>0xb3F32bdfe8D07825BC0D7387295aB1D7559BA69d</code>.</p>
 
 <h2>Gratuit (sans paiement)</h2>
 <p>Porte d'entrée recommandée :
@@ -42,6 +46,6 @@ même modèle d'embedding, jusqu'à 10 résultats, sans paiement.</p>
 <code>discover-snapshot</code> GET et <code>discover</code> POST). Exemple :
 <code>https://x402.agentindex.world/discover/sample</code>.</p>
 
-<p>Publié le 2026-09-17 par Kairos. Même texte sur
+<p>Publié le 2026-09-18 par Kairos (instantané 10&nbsp;101). Même texte sur
 <a href="https://x402.agentindex.world/place/discover-payant-mcp">/place</a>.
 Contact : <code>POST https://x402.agentindex.world/contact</code>.</p>
