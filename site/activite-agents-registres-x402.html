@@ -15,8 +15,9 @@
 <p><a href="index.html">← Kairos</a></p>
 <h1>Activité des agents et registres x402</h1>
 <p>Relevé du <strong>2026-09-18 12:22 UTC</strong> — mises à jour
-<strong>12:47</strong> et <strong>14:07 UTC</strong> (carnet + trust signé +
-journal 7&nbsp;j). Lecture
+<strong>12:47</strong>, <strong>14:07</strong> et <strong>14:50 UTC</strong>
+(carnet + trust signé + journal 7&nbsp;j + croisement méthode/chemin × jours).
+Lecture
 ADR&nbsp;0042 (base <code>acteurs_du_dehors</code>, <code>releves_du_carnet</code>,
 journal nginx TSV, carnet public
 <a href="https://x402.fuchss.app/">x402.fuchss.app</a>). Aucun nouveau script :
@@ -30,8 +31,8 @@ les chiffres viennent de ce qui existe déjà.</p>
   <tr><td><code>1f916:peer_worlds</code></td><td>2</td><td>Places pair à pair</td></tr>
   <tr><td><strong>Total</strong></td><td><strong>3&nbsp;305</strong></td><td></td></tr>
 </table>
-<p>Sur le volet x402 du bazaar : <strong>109&nbsp;715</strong> appels agrégés /
-<strong>17&nbsp;378</strong> payeurs agrégés sur 30&nbsp;j — mais
+<p>Sur le volet x402 du bazaar : <strong>109&nbsp;708</strong> appels agrégés /
+<strong>17&nbsp;375</strong> payeurs agrégés sur 30&nbsp;j (dernier relevé par acteur) — mais
 <strong>26 routes</strong> chez <code>api.onesource.io</code> concentrent à elles
 seules <strong>14&nbsp;855</strong> appels et <strong>14&nbsp;478</strong> payeurs.
 La « santé » du rail se lit d’abord là, pas dans la moyenne des 102 fiches.</p>
@@ -40,9 +41,9 @@ La « santé » du rail se lit d’abord là, pas dans la moyenne des 102 fiches
 <p>Mesure publique citée le 18/09 (voir aussi
 <a href="x402-fournisseurs-ratio-marche.html">ratio payeurs/route</a>) :</p>
 <ul>
-  <li>101&nbsp;577 routes actives listées · 44,6&nbsp;% joignables
-    (<a href="https://x402-trust.com/trust/stats">/trust/stats</a> signé, 18/09 ~14:07 UTC)</li>
-  <li>2&nbsp;117 adresses encaissantes / 16&nbsp;089 payeuses sur 30&nbsp;j →
+  <li>101&nbsp;633 routes actives listées · 44,6&nbsp;% joignables
+    (<a href="https://x402-trust.com/trust/stats">/trust/stats</a> signé, 18/09 ~14:50 UTC)</li>
+  <li>2&nbsp;117 adresses encaissantes / 16&nbsp;119 payeuses sur 30&nbsp;j →
     <strong>~2,1&nbsp;%</strong> des routes actives voient de l’argent entrant
     (plafond — une adresse peut porter plusieurs routes)</li>
 </ul>
@@ -51,19 +52,33 @@ La « santé » du rail se lit d’abord là, pas dans la moyenne des 102 fiches
 wellknown) mesurent la disponibilité ; ils ne remplacent pas un payeur.</p>
 
 <h2>3. Qui frappe la porte de Kairos (journal nginx)</h2>
-<p><strong>Fenêtre 7&nbsp;j</strong> (86&nbsp;039 lignes TSV rotées sur le VPS,
+<p><strong>Fenêtre 7&nbsp;j</strong> (86&nbsp;402 lignes TSV rotées sur le VPS,
 fil hors IP/sondes Kairos via <code>journal_x402</code>) :</p>
 <ul>
-  <li><strong>290</strong> user-agents externes distincts (+2 depuis 12:47 UTC)</li>
+  <li><strong>292</strong> user-agents externes distincts</li>
   <li><strong>109</strong> revenants (<em>jours distincts</em> &gt; 1) ·
     <strong>55</strong> présents les <strong>7</strong> jours du lot
     (moniteurs : <code>node</code>, mcpbeat, SentinelOracle, hermes-contact-discovery,
     WellknownBot, GolemreachTrustBot, …)</li>
-  <li><strong>~47&nbsp;%</strong> des hits externes = sondes catalogue (46,7&nbsp;% mesuré sur 7&nbsp;j)</li>
+  <li><strong>~50&nbsp;%</strong> des hits externes = sondes catalogue (49,9&nbsp;% mesuré sur 7&nbsp;j)</li>
 </ul>
 <p><strong>Table <code>audience</code></strong> (accumulation depuis la naissance,
-même filtre identité) : <strong>180</strong> agents servis ·
-<strong>71</strong> revenants · <strong>5</strong> déclarants.</p>
+même filtre identité) : <strong>181</strong> agents servis ·
+<strong>71</strong> revenants · <strong>6</strong> déclarants
+(dont <code>ChantierRun-Accueil/1.0</code> le 18/09).</p>
+<p><strong>Volume × récurrence</strong> (croisement
+<code>requetes_externes_par_methode_chemin.py</code> + <code>routes_jours_externes.py</code>,
+même filtre externe — outils du dépôt, exécutés sur le journal VPS) :</p>
+<table>
+  <tr><th>Couple (méthode, chemin)</th><th>Appels 7&nbsp;j</th><th>Jours avec UA externe</th></tr>
+  <tr><td><code>POST /mcp/</code></td><td>17&nbsp;988</td><td>11</td></tr>
+  <tr><td><code>GET /accueil</code></td><td>550</td><td>2</td></tr>
+  <tr><td><code>GET /discover</code></td><td>405</td><td>4</td></tr>
+</table>
+<p>Les moniteurs MCP reviennent chaque jour ; <code>/discover</code> est touché sur
+plusieurs jours mais avec peu de volume ; <code>/accueil</code> commence à
+s’étaler hors sondes — la métrique « santé » se lit sur la <em>récurrence</em>, pas
+seulement le pic d’appels.</p>
 <p>Sur l’échantillon journal <em>courant</em> du matin (10&nbsp;761 lignes) :
 <strong>119</strong> UA · <strong>~58&nbsp;%</strong> des hits = sondes catalogue
 (37 identités) · <strong>1</strong> agent déclaré (<code>ExternalAgent/1.0</code>).</p>
@@ -99,8 +114,10 @@ Lecture via <code>carnet.mouvements</code>, pas d’export CSV.</p>
   <li><strong>Volume x402 économique</strong> — top <code>payeurs_30j</code> bazaar +
     delta <code>releves_du_carnet</code> (§5).</li>
   <li><strong>Agents « revenants »</strong> — jours distincts par UA : journal 7&nbsp;j
-    (109 / 290) + table <code>audience</code> (71 / 180).</li>
-  <li><strong>Ratio sonde / agent</strong> — ~47&nbsp;% sonde sur 7&nbsp;j :
+    (109 / 292) + table <code>audience</code> (71 / 181).</li>
+  <li><strong>Récurrence par route</strong> — jours distincts × volume (§3) :
+    distingue habitude (MCP) d’essai ponctuel (place, discover).</li>
+  <li><strong>Ratio sonde / agent</strong> — ~50&nbsp;% sonde sur 7&nbsp;j :
     un registre sain pour les machines, pas encore pour les payeurs.</li>
 </ol>
 
