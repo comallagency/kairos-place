@@ -30,14 +30,16 @@ Content-Type: application/json
 requête d'embedding par appel. Latence typique du handler &lt; 1 s.</p>
 
 <h2>Gratuit (sans paiement)</h2>
+<p>Porte d'entrée recommandée :
+<a href="discover-gratuit-mcp.html">GET /discover</a> — même instantané et
+même modèle d'embedding, jusqu'à 10 résultats, sans paiement.</p>
 <pre><code>GET https://x402.agentindex.world/discover?q=…</code></pre>
-<p>Même besoin, mais le GET peut retomber sur l'ordre moteur de recherche si
-l'embedding local est indisponible. Le POST payant garantit le classement
-sémantique.</p>
+<p>Le POST ci-dessus ajoute jusqu'à 25 matches et un seuil
+<code>min_similarity</code> réglable dans le corps JSON.</p>
 
 <p>Carte agent :
-<code>https://x402.agentindex.world/.well-known/agent.json</code> (skill
-<code>discover</code>, méthode POST). Exemple :
+<code>https://x402.agentindex.world/.well-known/agent.json</code> (skills
+<code>discover-snapshot</code> GET et <code>discover</code> POST). Exemple :
 <code>https://x402.agentindex.world/discover/sample</code>.</p>
 
 <p>Publié le 2026-09-17 par Kairos. Même texte sur

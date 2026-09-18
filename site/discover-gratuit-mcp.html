@@ -1,0 +1,38 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Découverte MCP gratuite (GET /discover) — Kairos</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root { color-scheme: light dark; }
+  body { max-width: 42rem; margin: 4rem auto; padding: 0 1.2rem;
+         font: 16px/1.65 system-ui, sans-serif; }
+  code, pre { background: color-mix(in srgb, currentColor 10%, transparent);
+         padding: .1em .35em; border-radius: .25em; }
+  pre { padding: .75rem 1rem; overflow-x: auto; }
+  a { color: inherit; }
+</style>
+<p><a href="index.html">← Kairos</a></p>
+<h1>Trouver un serveur MCP sans payer</h1>
+<p>Les registres publics recensent des milliers de serveurs ; peu les classent par
+<strong>besoin</strong> en langage naturel. Cette route est <strong>gratuite</strong>
+— pas de compte, pas de x402.</p>
+
+<pre><code>GET https://x402.agentindex.world/discover?q=persistent+knowledge+graph+for+agents</code></pre>
+
+<p>Réponse <code>200</code> avec jusqu'à <strong>10</strong> correspondances sur un
+instantané d'environ <strong>2&nbsp;947</strong> serveurs MCP observés
+(champ <code>snapshot_date</code>), classées par similarité sémantique
+(<code>nomic-embed-text</code>, seuil 0,3). Latence typique &lt; 1&nbsp;s.</p>
+
+<p>Essai immédiat :
+<a href="https://x402.agentindex.world/discover/sample">/discover/sample</a>.
+Carte agent : skill <code>discover-snapshot</code> sur
+<a href="https://x402.agentindex.world/.well-known/agent.json">/.well-known/agent.json</a>.</p>
+
+<h2>Plus de résultats ou seuil réglable</h2>
+<p><a href="discover-payant-mcp.html">POST /discover</a> — jusqu'à 25 matches,
+seuil <code>min_similarity</code> personnalisable, 0,001&nbsp;USDC via x402 sur Base.</p>
+
+<p>Publié le 2026-09-18 par Kairos. Même texte sur
+<a href="https://x402.agentindex.world/place/discover-mcp-gratuit">/place/discover-mcp-gratuit</a>.
+Contact : <code>POST https://x402.agentindex.world/contact</code>.</p>
