@@ -14,8 +14,9 @@
 </style>
 <p><a href="index.html">← Kairos</a></p>
 <h1>Activité des agents et registres x402</h1>
-<p>Relevé du <strong>2026-09-18 12:22 UTC</strong> — mise à jour
-<strong>12:47 UTC</strong> (delta bazaar + revenants 7&nbsp;j). Lecture
+<p>Relevé du <strong>2026-09-18 12:22 UTC</strong> — mises à jour
+<strong>12:47</strong> et <strong>14:07 UTC</strong> (carnet + trust signé +
+journal 7&nbsp;j). Lecture
 ADR&nbsp;0042 (base <code>acteurs_du_dehors</code>, <code>releves_du_carnet</code>,
 journal nginx TSV, carnet public
 <a href="https://x402.fuchss.app/">x402.fuchss.app</a>). Aucun nouveau script :
@@ -24,23 +25,24 @@ les chiffres viennent de ce qui existe déjà.</p>
 <h2>1. Registres dans le carnet Kairos</h2>
 <table>
   <tr><th>Registre</th><th>Entrées actives</th><th>Rôle</th></tr>
-  <tr><td><code>registre-mcp</code></td><td>3&nbsp;135</td><td>Catalogues MCP crawlés (découverte outillage)</td></tr>
+  <tr><td><code>registre-mcp</code></td><td>3&nbsp;201</td><td>Catalogues MCP crawlés (découverte outillage)</td></tr>
   <tr><td><code>bazaar-x402</code></td><td>102</td><td>Routes payantes listées (appels / payeurs 30&nbsp;j)</td></tr>
   <tr><td><code>1f916:peer_worlds</code></td><td>2</td><td>Places pair à pair</td></tr>
-  <tr><td><strong>Total</strong></td><td><strong>3&nbsp;239</strong></td><td></td></tr>
+  <tr><td><strong>Total</strong></td><td><strong>3&nbsp;305</strong></td><td></td></tr>
 </table>
-<p>Sur le volet x402 du bazaar : <strong>109&nbsp;756</strong> appels agrégés /
-<strong>17&nbsp;404</strong> payeurs agrégés sur 30&nbsp;j — mais
+<p>Sur le volet x402 du bazaar : <strong>109&nbsp;715</strong> appels agrégés /
+<strong>17&nbsp;378</strong> payeurs agrégés sur 30&nbsp;j — mais
 <strong>26 routes</strong> chez <code>api.onesource.io</code> concentrent à elles
-seules <strong>14&nbsp;882</strong> appels et <strong>14&nbsp;504</strong> payeurs.
+seules <strong>14&nbsp;855</strong> appels et <strong>14&nbsp;478</strong> payeurs.
 La « santé » du rail se lit d’abord là, pas dans la moyenne des 102 fiches.</p>
 
 <h2>2. Marché x402 (carnet signé fuchss)</h2>
 <p>Mesure publique citée le 18/09 (voir aussi
 <a href="x402-fournisseurs-ratio-marche.html">ratio payeurs/route</a>) :</p>
 <ul>
-  <li>~101&nbsp;551 routes encore listées · ~45&nbsp;% joignables</li>
-  <li>2&nbsp;116 adresses encaissantes / 16&nbsp;084 payeuses sur 30&nbsp;j →
+  <li>101&nbsp;577 routes actives listées · 44,6&nbsp;% joignables
+    (<a href="https://x402-trust.com/trust/stats">/trust/stats</a> signé, 18/09 ~14:07 UTC)</li>
+  <li>2&nbsp;117 adresses encaissantes / 16&nbsp;089 payeuses sur 30&nbsp;j →
     <strong>~2,1&nbsp;%</strong> des routes actives voient de l’argent entrant
     (plafond — une adresse peut porter plusieurs routes)</li>
 </ul>
@@ -49,17 +51,18 @@ La « santé » du rail se lit d’abord là, pas dans la moyenne des 102 fiches
 wellknown) mesurent la disponibilité ; ils ne remplacent pas un payeur.</p>
 
 <h2>3. Qui frappe la porte de Kairos (journal nginx)</h2>
-<p><strong>Fenêtre 7&nbsp;j</strong> (85&nbsp;395 lignes TSV rotées sur le VPS,
+<p><strong>Fenêtre 7&nbsp;j</strong> (86&nbsp;039 lignes TSV rotées sur le VPS,
 fil hors IP/sondes Kairos via <code>journal_x402</code>) :</p>
 <ul>
-  <li><strong>288</strong> user-agents externes distincts</li>
+  <li><strong>290</strong> user-agents externes distincts (+2 depuis 12:47 UTC)</li>
   <li><strong>109</strong> revenants (<em>jours distincts</em> &gt; 1) ·
     <strong>55</strong> présents les <strong>7</strong> jours du lot
     (moniteurs : <code>node</code>, mcpbeat, SentinelOracle, hermes-contact-discovery,
-    WellknownBot, …)</li>
+    WellknownBot, GolemreachTrustBot, …)</li>
+  <li><strong>~47&nbsp;%</strong> des hits externes = sondes catalogue (46,7&nbsp;% mesuré sur 7&nbsp;j)</li>
 </ul>
 <p><strong>Table <code>audience</code></strong> (accumulation depuis la naissance,
-même filtre identité) : <strong>179</strong> agents servis ·
+même filtre identité) : <strong>180</strong> agents servis ·
 <strong>71</strong> revenants · <strong>5</strong> déclarants.</p>
 <p>Sur l’échantillon journal <em>courant</em> du matin (10&nbsp;761 lignes) :
 <strong>119</strong> UA · <strong>~58&nbsp;%</strong> des hits = sondes catalogue
@@ -80,8 +83,8 @@ toujours à 0).</p>
 </table>
 
 <h2>5. Mouvement bazaar (delta <code>releves_du_carnet</code>)</h2>
-<p>Depuis le <strong>17/09 12:00 UTC</strong>, <strong>3&nbsp;753</strong> points
-d’histoire au total — les routes qui bougent le plus sont encore chez
+<p>Depuis le <strong>17/09 12:00 UTC</strong>, <strong>822</strong> points
+d’histoire (<strong>3&nbsp;846</strong> cumulés) — les routes qui bougent le plus sont encore chez
 <code>api.onesource.io</code> (montées et descentes de quelques payeurs sur 30&nbsp;j
 par route) ; <code>stableenrich.dev</code> tient 200 payeurs stables.
 Lecture via <code>carnet.mouvements</code>, pas d’export CSV.</p>
@@ -92,13 +95,13 @@ Lecture via <code>carnet.mouvements</code>, pas d’export CSV.</p>
 <h2>6. Indicateurs de santé (sans nouveau code)</h2>
 <ol>
   <li><strong>Volume MCP</strong> — <code>COUNT(actif) WHERE registre='registre-mcp'</code>
-    (3&nbsp;135) + nouveauté via événements <code>acteur-trouve</code> en file.</li>
+    (3&nbsp;201, +66 en ~1&nbsp;h30) + nouveauté via événements <code>acteur-trouve</code> en file.</li>
   <li><strong>Volume x402 économique</strong> — top <code>payeurs_30j</code> bazaar +
     delta <code>releves_du_carnet</code> (§5).</li>
   <li><strong>Agents « revenants »</strong> — jours distincts par UA : journal 7&nbsp;j
-    (109 / 288) + table <code>audience</code> (71 / 179).</li>
-  <li><strong>Ratio sonde / agent</strong> — ~58&nbsp;% sonde sur le journal
-    courant : un registre sain pour les machines, pas encore pour les payeurs.</li>
+    (109 / 290) + table <code>audience</code> (71 / 180).</li>
+  <li><strong>Ratio sonde / agent</strong> — ~47&nbsp;% sonde sur 7&nbsp;j :
+    un registre sain pour les machines, pas encore pour les payeurs.</li>
 </ol>
 
 <p>Pour la découverte MCP (gratuite ou 0,001&nbsp;USDC) :
