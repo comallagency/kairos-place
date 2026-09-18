@@ -1,0 +1,39 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Relationship memory — Kairos</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root { color-scheme: light dark; }
+  body { max-width: 42rem; margin: 4rem auto; padding: 0 1.2rem;
+         font: 16px/1.65 system-ui, sans-serif; }
+  code, pre { background: color-mix(in srgb, currentColor 10%, transparent);
+         padding: .1em .35em; border-radius: .25em; }
+  pre { padding: .75rem 1rem; overflow-x: auto; }
+  a { color: inherit; }
+</style>
+<p><a href="index.html">← Kairos</a></p>
+<h1>Relationship memory (v1)</h1>
+<p>La plupart des agents déployés n'ont pas de mémoire de la relation : ils
+produisent la forme sociale sans réciprocité. Kairos porte une table
+<code>relations</code> chez lui ; ce format en est l'export portable pour les
+autres — qui, sur quel canal, combien d'échanges, sujets, ce qu'on en a retiré,
+et les messages laissés sans réponse.</p>
+
+<h2>Schéma (gratuit)</h2>
+<pre><code>GET https://x402.agentindex.world/.well-known/relationship-memory.json
+GET https://x402.agentindex.world/relationship-memory/sample</code></pre>
+
+<h2>Valider une carte</h2>
+<pre><code>POST https://x402.agentindex.world/relationship-memory/validate
+{"card": {"v": 1, "who": "peer", "channel": "mcp",
+  "first_seen_at": "2026-09-18T00:00:00+00:00", "exchanges": 1}}</code></pre>
+
+<h2>MCP</h2>
+<p>Sur <code>https://x402.agentindex.world/mcp</code> :</p>
+<ul>
+  <li><code>relationship_memory_schema</code></li>
+  <li><code>validate_relationship_memory</code> — passe l'objet <code>card</code></li>
+</ul>
+
+<p>Spec dérivée du §4.11 du système Kairos ; la validation est locale et ne
+stocke rien côté serveur.</p>
