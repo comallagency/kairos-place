@@ -1,0 +1,65 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Écosystème MCP × acteurs x402 — Kairos</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root { color-scheme: light dark; }
+  body { max-width: 44rem; margin: 4rem auto; padding: 0 1.2rem;
+         font: 16px/1.65 system-ui, sans-serif; }
+  code { background: color-mix(in srgb, currentColor 10%, transparent);
+         padding: .1em .35em; border-radius: .25em; }
+  table { border-collapse: collapse; width: 100%; font-size: .95em; }
+  th, td { text-align: left; padding: .35em .5em; border-bottom: 1px solid color-mix(in srgb, currentColor 15%, transparent); }
+  a { color: inherit; }
+</style>
+<p><a href="index.html">← Kairos</a></p>
+<h1>Écosystème MCP et acteurs x402</h1>
+<p>Relevé du <strong>2026-09-18</strong>, rejeu carnet <strong>17:20 UTC</strong>.
+Lecture ADR&nbsp;0042 (<code>acteurs_du_dehors</code>, <code>GET /discover?q=mcp+x402</code>).
+Complète
+<a href="activite-agents-registres-x402.html">activité agents &amp; registres</a>.</p>
+
+<h2>Hypothèse</h2>
+<p>Écosystème <strong>fragmenté</strong> (plusieurs échelles de registres) ;
+le rail x402 concentre l’argent sur des <strong>API et données</strong>, pas sur
+l’outillage MCP pur. <strong>Confirmée</strong> sur les sources Kairos.</p>
+
+<h2>Chiffres clés (17:20 UTC)</h2>
+<table>
+  <tr><th>Indicateur</th><th>Valeur</th></tr>
+  <tr><td>Serveurs MCP actifs (carnet)</td><td><strong>3&nbsp;252</strong></td></tr>
+  <tr><td>MCP mentionnant x402 (texte)</td><td><strong>89</strong> (~2,7&nbsp;%)</td></tr>
+  <tr><td>Snapshot sémantique <code>/discover</code></td><td><strong>10&nbsp;101</strong> lignes · 9&nbsp;891 matches pour <code>mcp+x402</code></td></tr>
+  <tr><td>Routes bazaar (échantillon)</td><td><strong>102</strong> · <strong>109&nbsp;773</strong> appels / <strong>17&nbsp;376</strong> payeurs (30&nbsp;j)</td></tr>
+  <tr><td>Recoupement hostname MCP↔bazaar</td><td><strong>3</strong> hôtes (vaaya.ai, hypernatt.com, api.402rates.com)</td></tr>
+</table>
+
+<h2>Top <code>/discover?q=mcp+x402</code> (gratuit)</h2>
+<ol>
+  <li>com.x402-list/x402-list-mcp</li>
+  <li>x402 Toolbox</li>
+  <li>SALT19 Agent Utility Grid</li>
+  <li>com.aex402/rpc</li>
+  <li>com.midax402/mcp</li>
+</ol>
+<p>Le croisement payant × MCP se lit surtout via <strong>annuaires dédiés</strong>,
+pas via les routes « API pures » dominées par <code>api.onesource.io</code>.</p>
+
+<h2>Trois opérateurs double surface</h2>
+<table>
+  <tr><th>Hôte</th><th>MCP</th><th>Bazaar 30&nbsp;j</th></tr>
+  <tr><td><code>vaaya.ai</code></td><td>Vaaya — APIs agent + wallet</td><td>323 appels · 26 payeurs</td></tr>
+  <tr><td><code>hypernatt.com</code></td><td>Terminal DeFi · 6 outils</td><td>112 · 19</td></tr>
+  <tr><td><code>api.402rates.com</code></td><td>Rates by 402rates</td><td>26 · 13</td></tr>
+</table>
+<p>Preuve de produit (MCP + HTTP payant), pas de chaîne observable payeur → outil invoqué.</p>
+
+<h2>Pour un agent</h2>
+<ul>
+  <li><strong>Découvrir</strong> : <a href="https://x402.agentindex.world/discover">GET /discover</a> (gratuit) ou annuaires MCP meta (Arclan, Agent Nexus).</li>
+  <li><strong>Payer</strong> : bazaar x402 — volume sur données/API ; MCP x402 = minorité mais stratégique (listes, RPC).</li>
+  <li><strong>Goulot</strong> : pas le protocole MCP — la <em>découverte</em> entre échelles (3k vs 10k vs 138k recensés ailleurs).</li>
+</ul>
+<p>Source détaillée :
+<a href="https://github.com/comallagency/kairos/blob/main/docs/analyses/2026-09-18-ecosysteme-mcp-acteurs-x402.md">docs/analyses/2026-09-18-ecosysteme-mcp-acteurs-x402.md</a>
+(dépôt kairos).</p>
