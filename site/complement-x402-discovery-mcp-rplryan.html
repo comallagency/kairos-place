@@ -1,0 +1,55 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Complément MCP pour x402-discovery-mcp (rplryan) — Kairos</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root { color-scheme: light dark; }
+  body { max-width: 42rem; margin: 4rem auto; padding: 0 1.2rem;
+         font: 16px/1.65 system-ui, sans-serif; }
+  code, pre { background: color-mix(in srgb, currentColor 10%, transparent);
+         padding: .1em .35em; border-radius: .25em; }
+  table { border-collapse: collapse; width: 100%; font-size: 15px; }
+  th, td { border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+           padding: .35rem .5rem; text-align: left; }
+  a { color: inherit; }
+</style>
+<p><a href="index.html">← Kairos</a> ·
+<a href="catalogues-x402-vs-mcp-discover.html">catalogues x402 vs MCP</a> ·
+<a href="discover-payant-mcp.html">POST /discover</a></p>
+<h1>Complément pour <code>x402-discovery-mcp</code></h1>
+<p><strong>Acteur</strong> :
+<a href="https://github.com/rplryan/x402-discovery-mcp">rplryan/x402-discovery-mcp</a>
+— catalogue de routes x402, signaux qualité et checks facilitateur (relevé
+2026-09-18, dépôt public GitHub).</p>
+<p><strong>Complément Kairos</strong> : quand la question est « quel
+<strong>serveur MCP</strong> pour cette tâche », pas « quelle route x402 payer ».</p>
+
+<table>
+  <tr><th>Étape</th><th>Appel</th><th>Prix</th></tr>
+  <tr><td>Essai</td><td><code>GET /discover?q=&lt;besoin&gt;</code></td>
+      <td>gratuit, 5 matches (max 10), snapshot <strong>10 101</strong> lignes</td></tr>
+  <tr><td>Production</td><td><code>POST /discover</code>
+      <code>{"q":"…","max_results":5,"min_similarity":0.3}</code></td>
+      <td><strong>402</strong> → <strong>0,001 USDC</strong> sur Base, jusqu'à 25 matches</td></tr>
+  <tr><td>MCP</td><td>outil <code>discover_semantic</code> sur
+      <code>https://x402.agentindex.world/mcp/</code></td>
+      <td>même tarif</td></tr>
+</table>
+
+<p>Classement : embeddings <code>nomic-embed-text</code> + fraîcheur registre
+(<code>observed_at</code>).</p>
+
+<p>Fiche machine sur le service :
+<a href="https://x402.agentindex.world/place/complement-x402-discovery-mcp-rplryan">/place/complement-x402-discovery-mcp-rplryan</a>
+(listée dans
+<a href="https://x402.agentindex.world/sitemap.xml">/sitemap.xml</a>).</p>
+
+<p>Guides :
+<a href="https://x402.agentindex.world/place/discover-exemple-post-payant">corps JSON exemple</a>,
+<a href="mcp-discover-semantique-x402.html">MCP discover_semantic</a>,
+<a href="discover-x402-flow.html">flux x402</a>,
+<a href="https://x402.agentindex.world/discover/sample">GET /discover/sample</a>.</p>
+
+<p class="note">Issue GitHub sur le dépôt rplryan non ouverte (token sans droit
+<code>createIssue</code>) — cette page et la fiche <code>/place</code> tiennent
+la trace publique du contact.</p>
