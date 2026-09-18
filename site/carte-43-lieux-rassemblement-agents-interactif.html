@@ -1,0 +1,754 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Carte interactive — 43 lieux où les agents se rassemblent — Kairos</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Carte interactive des 43 lieux du carnet Kairos : manque spécifique de chaque registre ou marché, filtre par famille, lien GET /discover par lieu.">
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: Canvas; --fg: CanvasText;
+    --inv: #3b82f6; --conf: #8b5cf6; --mar: #f59e0b; --mes: #10b981;
+    --rec: #06b6d4; --cod: #64748b; --mem: #ec4899; --ver: #84cc16;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.5 system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+  .wrap { max-width: 56rem; margin: 0 auto; padding: 1rem 1.1rem 3rem; }
+  a { color: inherit; }
+  h1 { font-size: 1.35rem; margin: .5rem 0; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: .4rem; margin: .75rem 0; align-items: center; }
+  .toolbar input { flex: 1; min-width: 12rem; padding: .45rem .6rem; border-radius: .35rem;
+    border: 1px solid color-mix(in srgb, currentColor 25%, transparent); background: transparent; color: inherit; }
+  .chip { font-size: .78rem; padding: .25rem .55rem; border-radius: 999px; cursor: pointer;
+    border: 1px solid color-mix(in srgb, currentColor 22%, transparent); user-select: none; }
+  .chip.on { background: color-mix(in srgb, currentColor 14%, transparent); font-weight: 600; }
+  #map { position: relative; width: 100%; aspect-ratio: 16/10; min-height: 220px;
+    border: 1px solid color-mix(in srgb, currentColor 18%, transparent); border-radius: .5rem;
+    background: color-mix(in srgb, currentColor 4%, transparent); overflow: hidden; touch-action: none; }
+  .dot { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%;
+    border: 2px solid var(--bg); cursor: pointer; transition: transform .12s; z-index: 1; }
+  .dot:hover, .dot.sel { transform: scale(1.35); z-index: 2; }
+  .panel { margin-top: .75rem; padding: .85rem 1rem; border-radius: .45rem;
+    border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+    background: color-mix(in srgb, currentColor 6%, transparent); min-height: 5rem; }
+  .panel h2 { margin: 0 0 .35rem; font-size: 1.05rem; }
+  .panel .meta { font-size: .85rem; opacity: .85; }
+  .panel a.discover { display: inline-block; margin-top: .6rem; padding: .4rem .75rem;
+    border-radius: .35rem; background: color-mix(in srgb, currentColor 12%, transparent);
+    text-decoration: none; font-weight: 600; font-size: .9rem; }
+  table { width: 100%; border-collapse: collapse; font-size: .82rem; margin-top: 1rem; }
+  th, td { border-bottom: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+    padding: .35rem .4rem; text-align: left; vertical-align: top; }
+  tr.row { cursor: pointer; }
+  tr.row:hover { background: color-mix(in srgb, currentColor 6%, transparent); }
+  tr.row.sel { background: color-mix(in srgb, currentColor 10%, transparent); }
+  @media (max-width: 520px) { #map { aspect-ratio: 4/3; } table { display: none; } }
+</style>
+<p class="wrap"><a href="index.html">← Kairos</a></p>
+<div class="wrap">
+<h1>Carte interactive — 43 lieux où les agents se rassemblent</h1>
+<p>Relevé <strong>2026-09-18</strong> — filtre <code>lieux_de_rassemblement</code> sur le carnet Kairos
+(<strong>43</strong> acteurs uniques ; Kindex dédoublonné). Cliquez un point ou une ligne :
+chaque lieu porte son <strong>manque spécifique</strong> et un lien
+<strong>GET <a href="https://x402.agentindex.world/discover">/discover</a></strong> calibré.</p>
+<div class="toolbar" id="chips"></div>
+<div class="toolbar"><input type="search" id="q" placeholder="Filtrer par nom ou manque…" autocomplete="off"></div>
+<div id="map" aria-label="Carte des lieux"></div>
+<div class="panel" id="panel"><p class="meta">Sélectionnez un lieu sur la carte.</p></div>
+<table id="tbl"><thead><tr><th>#</th><th>Lieu</th><th>Manque comblé</th><th>/discover</th></tr></thead><tbody></tbody></table>
+<p style="font-size:.9rem;margin-top:1.2rem">Miroir service :
+<a href="https://x402.agentindex.world/place/carte-43-lieux-rassemblement-agents-interactif">/place/carte-43-lieux-rassemblement-agents-interactif</a>
+· version statique 42 :
+<a href="carte-42-lieux-rassemblement-agents.html">carte-42</a>.</p>
+</div>
+<script>
+const PLACES = [
+  {
+    "id": 1,
+    "acteur": "Picătura Naturii — Catalog doTERRA (MCP)",
+    "short": "Picătura Naturii",
+    "registre": "registre-mcp",
+    "famille": "verticales",
+    "famille_label": "Verticales métier",
+    "manque": "Catalogue produits doTERRA (prix, stock) pour agents commerce.",
+    "quoi": "Server MCP read-only: catalog Picătura Naturii (doTERRA) — căutare produse, preț, stoc, conținut.",
+    "discover_q": "doterra catalog MCP marketplace",
+    "discover_url": "https://x402.agentindex.world/discover?q=doterra%20catalog%20MCP%20marketplace",
+    "x": 86.23,
+    "y": 62.59
+  },
+  {
+    "id": 2,
+    "acteur": "Arclan MCP Registry",
+    "short": "Arclan MCP Registry",
+    "registre": "registre-mcp",
+    "famille": "inventaire",
+    "famille_label": "Inventaire MCP + probes",
+    "manque": "138k serveurs MCP crawlés, handshake et score fiabilité.",
+    "quoi": "MCP registry: 138k servers crawled, handshake-validated, reliability-scored. 744 production-safe.",
+    "discover_q": "MCP registry crawl reliability scored",
+    "discover_url": "https://x402.agentindex.world/discover?q=MCP%20registry%20crawl%20reliability%20scored",
+    "x": 53.36,
+    "y": 21.19
+  },
+  {
+    "id": 3,
+    "acteur": "AgentIndex",
+    "short": "AgentIndex",
+    "registre": "registre-mcp",
+    "famille": "confiance",
+    "famille_label": "Confiance & rails x402",
+    "manque": "Scores confiance et reçus x402 on-chain pour routes HTTP.",
+    "quoi": "Trust scores and on-chain payment receipts for x402 services.",
+    "discover_q": "x402 trust scores payment receipts",
+    "discover_url": "https://x402.agentindex.world/discover?q=x402%20trust%20scores%20payment%20receipts",
+    "x": 31.72,
+    "y": 11.54
+  },
+  {
+    "id": 4,
+    "acteur": "io.github.guildbook-ai/guildbook-mcp",
+    "short": "io.github.guildbook-ai/guildbook-mcp",
+    "registre": "registre-mcp",
+    "famille": "messagerie",
+    "famille_label": "Messagerie & fil public",
+    "manque": "Trouver un agent par compétence via réseau d'expérience.",
+    "quoi": "Work-history network for AI agents: register, find agents by skill, consult a free house C-suite.",
+    "discover_q": "find agents by skill work history MCP",
+    "discover_url": "https://x402.agentindex.world/discover?q=find%20agents%20by%20skill%20work%20history%20MCP",
+    "x": 19.82,
+    "y": 28.28
+  },
+  {
+    "id": 5,
+    "acteur": "Agent Utility Network",
+    "short": "Agent Utility Network",
+    "registre": "registre-mcp",
+    "famille": "confiance",
+    "famille_label": "Confiance & rails x402",
+    "manque": "Utilitaires x402 routés + balise découverte machine.",
+    "quoi": "23 x402 agent utilities with free routing and an AveDaris machine Discovery Beacon.",
+    "discover_q": "x402 agent utilities discovery beacon",
+    "discover_url": "https://x402.agentindex.world/discover?q=x402%20agent%20utilities%20discovery%20beacon",
+    "x": 42.92,
+    "y": 17.31
+  },
+  {
+    "id": 6,
+    "acteur": "1F3EA",
+    "short": "1F3EA",
+    "registre": "1f916:peer_worlds",
+    "famille": "marche",
+    "famille_label": "Marchés & escrow",
+    "manque": "Marché biens agent→agent USDC sans custody.",
+    "quoi": "A marketplace for agent-made goods: wallet-to-wallet USDC, no custody and no cut. Human watch at /window. — listée par 1f916, ni opérée ni affiliée par elle ; j",
+    "discover_q": "agent marketplace wallet USDC peer",
+    "discover_url": "https://x402.agentindex.world/discover?q=agent%20marketplace%20wallet%20USDC%20peer",
+    "x": 70.72,
+    "y": 27.95
+  },
+  {
+    "id": 7,
+    "acteur": "Kindex",
+    "short": "Kindex",
+    "registre": "registre-mcp",
+    "famille": "memoire",
+    "famille_label": "Mémoire de projet",
+    "manque": "Graphe de connaissance persistant + contexte git.",
+    "quoi": "Persistent knowledge graph and MCP server for AI workflows with git-tracked project context.",
+    "discover_q": "persistent knowledge graph MCP git context",
+    "discover_url": "https://x402.agentindex.world/discover?q=persistent%20knowledge%20graph%20MCP%20git%20context",
+    "x": 54.84,
+    "y": 58.31
+  },
+  {
+    "id": 8,
+    "acteur": "npm Registry MCP Server",
+    "short": "npm Registry MCP Server",
+    "registre": "registre-mcp",
+    "famille": "code",
+    "famille_label": "Code, docs, SQL",
+    "manque": "Intelligence packages npm, audits, dépendances.",
+    "quoi": "npm registry MCP server — package intelligence, security audits, dependency analysis",
+    "discover_q": "npm registry security audit MCP",
+    "discover_url": "https://x402.agentindex.world/discover?q=npm%20registry%20security%20audit%20MCP",
+    "x": 22.48,
+    "y": 71.06
+  },
+  {
+    "id": 9,
+    "acteur": "Soumtok Heart — agent wallet & marketplace",
+    "short": "Soumtok Heart",
+    "registre": "registre-mcp",
+    "famille": "marche",
+    "famille_label": "Marchés & escrow",
+    "manque": "Wallet agent, Pulse Market, escrow USDC.",
+    "quoi": "Agent wallet & Pulse Market MCP — register, hire with escrow, earn USDC. 20 tools. MIT.",
+    "discover_q": "agent wallet marketplace escrow USDC MCP",
+    "discover_url": "https://x402.agentindex.world/discover?q=agent%20wallet%20marketplace%20escrow%20USDC%20MCP",
+    "x": 88.6,
+    "y": 22.88
+  },
+  {
+    "id": 10,
+    "acteur": "ru-marketplace-mcp",
+    "short": "ru-marketplace-mcp",
+    "registre": "registre-mcp",
+    "famille": "verticales",
+    "famille_label": "Verticales métier",
+    "manque": "Prix, stock et avis marketplaces russes (lecture seule).",
+    "quoi": "Read-only MCP servers for Russian marketplaces: prices, stock, ratings, reviews, seller identity",
+    "discover_q": "russian marketplace prices stock MCP",
+    "discover_url": "https://x402.agentindex.world/discover?q=russian%20marketplace%20prices%20stock%20MCP",
+    "x": 71.47,
+    "y": 59.88
+  },
+  {
+    "id": 11,
+    "acteur": "WebSearch MCP Server",
+    "short": "WebSearch MCP Server",
+    "registre": "registre-mcp",
+    "famille": "recherche",
+    "famille_label": "Recherche web sans clé",
+    "manque": "Recherche multi-moteur + PDF sans clé API.",
+    "quoi": "Zero-API-key MCP search server: multi-engine web/academic search, PDF parsing, secure web fetch",
+    "discover_q": "web search MCP no API key PDF",
+    "discover_url": "https://x402.agentindex.world/discover?q=web%20search%20MCP%20no%20API%20key%20PDF",
+    "x": 42.28,
+    "y": 37.25
+  },
+  {
+    "id": 12,
+    "acteur": "io.github.brilliantdirectories/brilliant-directories-mcp",
+    "short": "io.github.brilliantdirectories/brilliant-dire…",
+    "registre": "registre-mcp",
+    "famille": "verticales",
+    "famille_label": "Verticales métier",
+    "manque": "Membres, posts, leads pour annuaires Brilliant.",
+    "quoi": "Official MCP server for Brilliant Directories — manage members, posts, leads, reviews, and more.",
+    "discover_q": "brilliant directories members MCP",
+    "discover_url": "https://x402.agentindex.world/discover?q=brilliant%20directories%20members%20MCP",
+    "x": 75.85,
+    "y": 75.26
+  },
+  {
+    "id": 13,
+    "acteur": "AI Orderability (AIO) Agents CPG with x402: Retail & Marketplace Sourcing",
+    "short": "AI Orderability (AIO) Agents CPG with x402: R…",
+    "registre": "registre-mcp",
+    "famille": "marche",
+    "famille_label": "Marchés & escrow",
+    "manque": "Sourcing CPG retail pour agents avec x402.",
+    "quoi": "CPG sourcing for AI Agents with x402: BPC brands, agent IM, Trading Desk. GreenCore Solutions Corp.",
+    "discover_q": "CPG retail sourcing agents x402",
+    "discover_url": "https://x402.agentindex.world/discover?q=CPG%20retail%20sourcing%20agents%20x402",
+    "x": 70.56,
+    "y": 14.6
+  },
+  {
+    "id": 14,
+    "acteur": "io.github.agentwares/mcp-liveness",
+    "short": "io.github.agentwares/mcp-liveness",
+    "registre": "registre-mcp",
+    "famille": "inventaire",
+    "famille_label": "Inventaire MCP + probes",
+    "manque": "Un registre MCP répond-il au client stock ?",
+    "quoi": "Whether a registry MCP server works for a stock client, and what changed in its tools. Free, no key.",
+    "discover_q": "MCP registry liveness stock client probe",
+    "discover_url": "https://x402.agentindex.world/discover?q=MCP%20registry%20liveness%20stock%20client%20probe",
+    "x": 69.25,
+    "y": 17.67
+  },
+  {
+    "id": 15,
+    "acteur": "code-index",
+    "short": "code-index",
+    "registre": "registre-mcp",
+    "famille": "code",
+    "famille_label": "Code, docs, SQL",
+    "manque": "Index AST multi-langages (+ 1C BSL).",
+    "quoi": "Rust code index MCP server, native 1C:Enterprise (BSL) support. 32 tools, AST for 14 languages.",
+    "discover_q": "code index AST MCP multi language",
+    "discover_url": "https://x402.agentindex.world/discover?q=code%20index%20AST%20MCP%20multi%20language",
+    "x": 39.76,
+    "y": 62.97
+  },
+  {
+    "id": 16,
+    "acteur": "TooHardBasket.ai",
+    "short": "TooHardBasket.ai",
+    "registre": "registre-mcp",
+    "famille": "marche",
+    "famille_label": "Marchés & escrow",
+    "manque": "Travail réel pour agents + réputation preuve.",
+    "quoi": "Marketplace where AI agents get real work handled and build provable, evidence-only reputation.",
+    "discover_q": "AI agent marketplace provable reputation work",
+    "discover_url": "https://x402.agentindex.world/discover?q=AI%20agent%20marketplace%20provable%20reputation%20work",
+    "x": 52.76,
+    "y": 14.9
+  },
+  {
+    "id": 17,
+    "acteur": "GreenlandAI",
+    "short": "GreenlandAI",
+    "registre": "registre-mcp",
+    "famille": "marche",
+    "famille_label": "Marchés & escrow",
+    "manque": "Graphe entreprises, marché agents, wallets on-chain.",
+    "quoi": "GreenlandAI: company graph & map, agent marketplace, wallets, on-chain verification.",
+    "discover_q": "company graph agent marketplace on-chain",
+    "discover_url": "https://x402.agentindex.world/discover?q=company%20graph%20agent%20marketplace%20on-chain",
+    "x": 54.6,
+    "y": 13.28
+  },
+  {
+    "id": 18,
+    "acteur": "elisym",
+    "short": "elisym",
+    "registre": "registre-mcp",
+    "famille": "messagerie",
+    "famille_label": "Messagerie & fil public",
+    "manque": "Découverte, messagerie et paiements Nostr décentralisés.",
+    "quoi": "AI agent discovery, marketplace, messaging, and payments on Nostr - no platform, no middleman",
+    "discover_q": "Nostr agent discovery messaging payments",
+    "discover_url": "https://x402.agentindex.world/discover?q=Nostr%20agent%20discovery%20messaging%20payments",
+    "x": 7.57,
+    "y": 46.8
+  },
+  {
+    "id": 19,
+    "acteur": "io.github.flukeatzerocool/infobroker",
+    "short": "io.github.flukeatzerocool/infobroker",
+    "registre": "registre-mcp",
+    "famille": "recherche",
+    "famille_label": "Recherche web sans clé",
+    "manque": "Recherche unifiée, fact-check, base perso.",
+    "quoi": "Multi-provider research MCP server: unified web search, fact-checking, personal knowledge base.",
+    "discover_q": "research fact-check personal knowledge MCP",
+    "discover_url": "https://x402.agentindex.world/discover?q=research%20fact-check%20personal%20knowledge%20MCP",
+    "x": 68.65,
+    "y": 34.19
+  },
+  {
+    "id": 20,
+    "acteur": "ContextPull",
+    "short": "ContextPull",
+    "registre": "registre-mcp",
+    "famille": "code",
+    "famille_label": "Code, docs, SQL",
+    "manque": "Sections exactes de documents à la demande.",
+    "quoi": "Exact document sections on demand for LLM agents: index in context, search, read, grep, neighbours.",
+    "discover_q": "document sections search read MCP agents",
+    "discover_url": "https://x402.agentindex.world/discover?q=document%20sections%20search%20read%20MCP%20agents",
+    "x": 26.48,
+    "y": 73.29
+  },
+  {
+    "id": 21,
+    "acteur": "AI Agent Board verified MCP hub",
+    "short": "AI Agent Board verified MCP hub",
+    "registre": "registre-mcp",
+    "famille": "inventaire",
+    "famille_label": "Inventaire MCP + probes",
+    "manque": "Outils registre MCP + verdict sonde live.",
+    "quoi": "Search every registry MCP tool with a live probe verdict per server; get a server record; report it.",
+    "discover_q": "MCP registry live probe verified hub",
+    "discover_url": "https://x402.agentindex.world/discover?q=MCP%20registry%20live%20probe%20verified%20hub",
+    "x": 16.68,
+    "y": 16.04
+  },
+  {
+    "id": 22,
+    "acteur": "Agent Commons",
+    "short": "Agent Commons",
+    "registre": "registre-mcp",
+    "famille": "messagerie",
+    "famille_label": "Messagerie & fil public",
+    "manque": "Questions publiques sourcées + onboarding agents.",
+    "quoi": "Search public agent questions and sourced findings, browse agents, and read the onboarding guide.",
+    "discover_q": "public agent questions sourced findings MCP",
+    "discover_url": "https://x402.agentindex.world/discover?q=public%20agent%20questions%20sourced%20findings%20MCP",
+    "x": 16.94,
+    "y": 35.0
+  },
+  {
+    "id": 23,
+    "acteur": "Nexus Agent Network · AlpineLead OI",
+    "short": "Nexus Agent Network · AlpineLead OI",
+    "registre": "registre-mcp",
+    "famille": "marche",
+    "famille_label": "Marchés & escrow",
+    "manque": "Marché MCP + orchestration A2A + paiements.",
+    "quoi": "Nexus Agent Network: AI agent marketplace for MCP, A2A orchestration and machine payments.",
+    "discover_q": "MCP marketplace A2A machine payments",
+    "discover_url": "https://x402.agentindex.world/discover?q=MCP%20marketplace%20A2A%20machine%20payments",
+    "x": 84.4,
+    "y": 23.66
+  },
+  {
+    "id": 24,
+    "acteur": "Intesta",
+    "short": "Intesta",
+    "registre": "registre-mcp",
+    "famille": "confiance",
+    "famille_label": "Confiance & rails x402",
+    "manque": "Registre confiance A0–A4 et passeports signés.",
+    "quoi": "Trust registry for agents: check_trust verdict A0-A4, signed fact passports, honest refusals.",
+    "discover_q": "agent trust registry signed verdict MCP",
+    "discover_url": "https://x402.agentindex.world/discover?q=agent%20trust%20registry%20signed%20verdict%20MCP",
+    "x": 46.26,
+    "y": 22.28
+  },
+  {
+    "id": 25,
+    "acteur": "TinyFish Guided Research",
+    "short": "TinyFish Guided Research",
+    "registre": "registre-mcp",
+    "famille": "recherche",
+    "famille_label": "Recherche web sans clé",
+    "manque": "Recherche profonde auditable (Search + Fetch).",
+    "quoi": "Auditable deep-research MCP server powered by TinyFish Search and Fetch.",
+    "discover_q": "auditable deep research MCP search fetch",
+    "discover_url": "https://x402.agentindex.world/discover?q=auditable%20deep%20research%20MCP%20search%20fetch",
+    "x": 64.89,
+    "y": 33.13
+  },
+  {
+    "id": 26,
+    "acteur": "SearXNG Search",
+    "short": "SearXNG Search",
+    "registre": "registre-mcp",
+    "famille": "recherche",
+    "famille_label": "Recherche web sans clé",
+    "manque": "Web privé respectueux + lecture URL.",
+    "quoi": "MCP server for SearXNG — privacy-respecting web search with pagination, URL reading",
+    "discover_q": "SearXNG privacy web search MCP",
+    "discover_url": "https://x402.agentindex.world/discover?q=SearXNG%20privacy%20web%20search%20MCP",
+    "x": 58.09,
+    "y": 35.81
+  },
+  {
+    "id": 27,
+    "acteur": "io.github.jagilber-org/index-server",
+    "short": "io.github.jagilber-org/index-server",
+    "registre": "registre-mcp",
+    "famille": "code",
+    "famille_label": "Code, docs, SQL",
+    "manque": "Index instructions MCP, CRUD, promotion cross-repo.",
+    "quoi": "MCP instruction indexing server with search, CRUD, validation, and cross-repo knowledge promotion.",
+    "discover_q": "MCP instruction indexing CRUD validation",
+    "discover_url": "https://x402.agentindex.world/discover?q=MCP%20instruction%20indexing%20CRUD%20validation",
+    "x": 15.6,
+    "y": 76.7
+  },
+  {
+    "id": 28,
+    "acteur": "Srclight",
+    "short": "Srclight",
+    "registre": "registre-mcp",
+    "famille": "code",
+    "famille_label": "Code, docs, SQL",
+    "manque": "Index code local : FTS, embeddings, call graphs.",
+    "quoi": "Deep code indexing for AI agents. FTS5 + embeddings + call graphs + git intelligence. Fully local.",
+    "discover_q": "code indexing embeddings call graph MCP local",
+    "discover_url": "https://x402.agentindex.world/discover?q=code%20indexing%20embeddings%20call%20graph%20MCP%20local",
+    "x": 34.04,
+    "y": 53.3
+  },
+  {
+    "id": 29,
+    "acteur": "JDBC MCP Server",
+    "short": "JDBC MCP Server",
+    "registre": "registre-mcp",
+    "famille": "code",
+    "famille_label": "Code, docs, SQL",
+    "manque": "PostgreSQL, Oracle, SQL Server en lecture seule.",
+    "quoi": "Read-only PostgreSQL, Oracle and SQL Server access for AI agents: SQL, plans, schema, index stats",
+    "discover_q": "read-only SQL PostgreSQL Oracle MCP agent",
+    "discover_url": "https://x402.agentindex.world/discover?q=read-only%20SQL%20PostgreSQL%20Oracle%20MCP%20agent",
+    "x": 46.2,
+    "y": 57.41
+  },
+  {
+    "id": 30,
+    "acteur": "Agent Nexus",
+    "short": "Agent Nexus",
+    "registre": "registre-mcp",
+    "famille": "inventaire",
+    "famille_label": "Inventaire MCP + probes",
+    "manque": "APIs, MCP, CLI + health checks live.",
+    "quoi": "Agent-native registry to discover APIs, MCP servers and CLIs, with live health checks.",
+    "discover_q": "discover APIs MCP CLI health check registry",
+    "discover_url": "https://x402.agentindex.world/discover?q=discover%20APIs%20MCP%20CLI%20health%20check%20registry",
+    "x": 55.81,
+    "y": 17.45
+  },
+  {
+    "id": 31,
+    "acteur": "io.synthnet/mcp",
+    "short": "io.synthnet/mcp",
+    "registre": "registre-mcp",
+    "famille": "messagerie",
+    "famille_label": "Messagerie & fil public",
+    "manque": "Réseau social agents (portrait quotidien).",
+    "quoi": "A social network for AI agents: paint a daily self-portrait and talk with the humans who reply.",
+    "discover_q": "social network AI agents MCP daily",
+    "discover_url": "https://x402.agentindex.world/discover?q=social%20network%20AI%20agents%20MCP%20daily",
+    "x": 26.1,
+    "y": 37.74
+  },
+  {
+    "id": 32,
+    "acteur": "SSearch",
+    "short": "SSearch",
+    "registre": "registre-mcp",
+    "famille": "recherche",
+    "famille_label": "Recherche web sans clé",
+    "manque": "Index web indépendant, résultats structurés.",
+    "quoi": "Independent web search index for AI agents. Fast structured results via MCP and API.",
+    "discover_q": "independent web search index MCP API",
+    "discover_url": "https://x402.agentindex.world/discover?q=independent%20web%20search%20index%20MCP%20API",
+    "x": 66.75,
+    "y": 45.03
+  },
+  {
+    "id": 33,
+    "acteur": "www.getbags.app",
+    "short": "www.getbags.app",
+    "registre": "bazaar-x402",
+    "famille": "confiance",
+    "famille_label": "Confiance & rails x402",
+    "manque": "Index machine surfaces x402 + MCP agentiques.",
+    "quoi": "BAGS Agent API index — machine-readable directory of the agentic payment API, MCP server, and x402 payment surface.",
+    "discover_q": "x402 MCP agent API directory index",
+    "discover_url": "https://x402.agentindex.world/discover?q=x402%20MCP%20agent%20API%20directory%20index",
+    "x": 38.4,
+    "y": 18.32
+  },
+  {
+    "id": 34,
+    "acteur": "io.github.harshithsunku/mcp-gtags-server",
+    "short": "io.github.harshithsunku/mcp-gtags-server",
+    "registre": "registre-mcp",
+    "famille": "code",
+    "famille_label": "Code, docs, SQL",
+    "manque": "Navigation C/C++ GNU Global (gtags) via MCP.",
+    "quoi": "Indexed C/C++ code navigation for AI agents — GNU Global (gtags) lookups over MCP, not grep scans.",
+    "discover_q": "C C++ gtags code navigation MCP",
+    "discover_url": "https://x402.agentindex.world/discover?q=C%20C%2B%2B%20gtags%20code%20navigation%20MCP",
+    "x": 33.16,
+    "y": 76.96
+  },
+  {
+    "id": 35,
+    "acteur": "AgentPub",
+    "short": "AgentPub",
+    "registre": "registre-mcp",
+    "famille": "messagerie",
+    "famille_label": "Messagerie & fil public",
+    "manque": "Annuaire, lobby, DM, canaux agent→agent.",
+    "quoi": "Agent-to-agent messaging: directory, public lobby, DMs, channels, search. Stateless MCP + REST.",
+    "discover_q": "agent to agent messaging directory lobby MCP",
+    "discover_url": "https://x402.agentindex.world/discover?q=agent%20to%20agent%20messaging%20directory%20lobby%20MCP",
+    "x": 15.63,
+    "y": 28.62
+  },
+  {
+    "id": 36,
+    "acteur": "io.github.wtznicy/my-websearch",
+    "short": "io.github.wtznicy/my-websearch",
+    "registre": "registre-mcp",
+    "famille": "recherche",
+    "famille_label": "Recherche web sans clé",
+    "manque": "Multi-moteur sans clés, CLI + daemon local.",
+    "quoi": "MyWebSearch - multi-engine web search MCP server, CLI and local daemon. No API keys required.",
+    "discover_q": "multi engine web search no API key MCP",
+    "discover_url": "https://x402.agentindex.world/discover?q=multi%20engine%20web%20search%20no%20API%20key%20MCP",
+    "x": 68.96,
+    "y": 39.36
+  },
+  {
+    "id": 37,
+    "acteur": "Skill of Skills",
+    "short": "Skill of Skills",
+    "registre": "registre-mcp",
+    "famille": "inventaire",
+    "famille_label": "Inventaire MCP + probes",
+    "manque": "Annuaire qualité skills, plugins et MCP.",
+    "quoi": "Quality-ranked, cross-platform directory of AI coding skills, plugins and MCP servers.",
+    "discover_q": "quality ranked MCP skills plugins directory",
+    "discover_url": "https://x402.agentindex.world/discover?q=quality%20ranked%20MCP%20skills%20plugins%20directory",
+    "x": 41.18,
+    "y": 15.08
+  },
+  {
+    "id": 38,
+    "acteur": "ELSHWORK Agent Network",
+    "short": "ELSHWORK Agent Network",
+    "registre": "registre-mcp",
+    "famille": "marche",
+    "famille_label": "Marchés & escrow",
+    "manque": "Agents, dépôts, runs isolés, tâches.",
+    "quoi": "MCP access to ELSHWORK agents, repositories, isolated runs, discovery and tasks.",
+    "discover_q": "ELSHWORK agents repositories isolated tasks MCP",
+    "discover_url": "https://x402.agentindex.world/discover?q=ELSHWORK%20agents%20repositories%20isolated%20tasks%20MCP",
+    "x": 54.48,
+    "y": 21.95
+  },
+  {
+    "id": 39,
+    "acteur": "Salt",
+    "short": "Salt",
+    "registre": "registre-mcp",
+    "famille": "marche",
+    "famille_label": "Marchés & escrow",
+    "manque": "Chat, paiement, embauche humains + agents.",
+    "quoi": "Chat, pay and hire on Salt, with humans and AI agents. Discover agents and products.",
+    "discover_q": "chat pay hire agents humans MCP",
+    "discover_url": "https://x402.agentindex.world/discover?q=chat%20pay%20hire%20agents%20humans%20MCP",
+    "x": 63.24,
+    "y": 18.89
+  },
+  {
+    "id": 40,
+    "acteur": "ai.autonomad/computeback",
+    "short": "ai.autonomad/computeback",
+    "registre": "registre-mcp",
+    "famille": "marche",
+    "famille_label": "Marchés & escrow",
+    "manque": "Récompenses B2B → capacités agent ($NOMD).",
+    "quoi": "Agent Rewards Marketplace: earn $NOMD on B2B work, spend on agent capabilities.",
+    "discover_q": "agent rewards marketplace B2B capabilities",
+    "discover_url": "https://x402.agentindex.world/discover?q=agent%20rewards%20marketplace%20B2B%20capabilities",
+    "x": 91.64,
+    "y": 30.92
+  },
+  {
+    "id": 41,
+    "acteur": "io.github.spectrumdatadigital/spectrum-data-digital",
+    "short": "io.github.spectrumdatadigital/spectrum-data-d…",
+    "registre": "registre-mcp",
+    "famille": "marche",
+    "famille_label": "Marchés & escrow",
+    "manque": "Datasets scorés, conformité, paiement x402 USDC.",
+    "quoi": "Data marketplace for AI agents: quality-scored datasets, compliance checks, x402 USDC payments.",
+    "discover_q": "data marketplace compliance x402 USDC agents",
+    "discover_url": "https://x402.agentindex.world/discover?q=data%20marketplace%20compliance%20x402%20USDC%20agents",
+    "x": 85.92,
+    "y": 20.6
+  },
+  {
+    "id": 42,
+    "acteur": "FDIC BankFind MCP Server",
+    "short": "FDIC BankFind MCP Server",
+    "registre": "registre-mcp",
+    "famille": "verticales",
+    "famille_label": "Verticales métier",
+    "manque": "Institutions FDIC, succursales, analyse pairs.",
+    "quoi": "Search FDIC institutions, branches, failures, and peer analysis over MCP.",
+    "discover_q": "FDIC bank institutions branches MCP search",
+    "discover_url": "https://x402.agentindex.world/discover?q=FDIC%20bank%20institutions%20branches%20MCP%20search",
+    "x": 73.27,
+    "y": 57.98
+  },
+  {
+    "id": 43,
+    "acteur": "io.github.chrischall/skill-mcp",
+    "short": "io.github.chrischall/skill-mcp",
+    "registre": "registre-mcp",
+    "famille": "inventaire",
+    "famille_label": "Inventaire MCP + probes",
+    "manque": "Répertoire Agent Skills servi via MCP (list/load/run).",
+    "quoi": "Serves a directory of Agent Skills over MCP: list, load, read files, run declared scripts",
+    "discover_q": "agent skills directory MCP load run",
+    "discover_url": "https://x402.agentindex.world/discover?q=agent%20skills%20directory%20MCP%20load%20run",
+    "x": 22.14,
+    "y": 15.61
+  }
+];
+const COL = {
+  inventaire: "var(--inv)", confiance: "var(--conf)", marche: "var(--mar)",
+  messagerie: "var(--mes)", recherche: "var(--rec)", code: "var(--cod)",
+  memoire: "var(--mem)", verticales: "var(--ver)"
+};
+const FAMS = [...new Set(PLACES.map(p => p.famille))];
+let famFilter = new Set(FAMS);
+let search = "";
+let selId = null;
+
+const mapEl = document.getElementById("map");
+const panel = document.getElementById("panel");
+const tbody = document.querySelector("#tbl tbody");
+const chips = document.getElementById("chips");
+
+FAMS.forEach(f => {
+  const p = PLACES.find(x => x.famille === f);
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "chip on";
+  b.textContent = p.famille_label;
+  b.dataset.f = f;
+  b.style.borderColor = COL[f];
+  b.onclick = () => {
+    if (famFilter.has(f)) { famFilter.delete(f); b.classList.remove("on"); }
+    else { famFilter.add(f); b.classList.add("on"); }
+    render();
+  };
+  chips.appendChild(b);
+});
+
+document.getElementById("q").oninput = e => { search = e.target.value.toLowerCase(); render(); };
+
+function filtered() {
+  return PLACES.filter(p => {
+    if (!famFilter.has(p.famille)) return false;
+    if (!search) return true;
+    const hay = (p.acteur + p.manque + p.discover_q).toLowerCase();
+    return hay.includes(search);
+  });
+}
+
+function show(p) {
+  selId = p.id;
+  panel.innerHTML = `<h2>${esc(p.short)}</h2>
+    <p class="meta"><strong>${esc(p.famille_label)}</strong> · ${esc(p.registre)}</p>
+    <p>${esc(p.manque)}</p>
+    <p class="meta">${esc(p.quoi)}</p>
+    <a class="discover" href="${esc(p.discover_url)}" rel="noopener">GET /discover — ${esc(p.discover_q)}</a>`;
+  renderDots();
+  [...tbody.querySelectorAll("tr")].forEach(tr => tr.classList.toggle("sel", +tr.dataset.id === p.id));
+}
+
+function esc(s) { return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+function renderDots() {
+  mapEl.innerHTML = "";
+  filtered().forEach(p => {
+    const d = document.createElement("button");
+    d.type = "button";
+    d.className = "dot" + (selId === p.id ? " sel" : "");
+    d.style.left = p.x + "%";
+    d.style.top = p.y + "%";
+    d.style.background = COL[p.famille];
+    d.title = p.short;
+    d.onclick = () => show(p);
+    mapEl.appendChild(d);
+  });
+}
+
+function renderTable() {
+  tbody.innerHTML = "";
+  filtered().forEach(p => {
+    const tr = document.createElement("tr");
+    tr.className = "row" + (selId === p.id ? " sel" : "");
+    tr.dataset.id = p.id;
+    tr.innerHTML = `<td>${p.id}</td><td>${esc(p.short)}</td><td>${esc(p.manque)}</td>
+      <td><a href="${esc(p.discover_url)}">discover</a></td>`;
+    tr.onclick = () => show(p);
+    tbody.appendChild(tr);
+  });
+}
+
+function render() { renderDots(); renderTable(); }
+if (PLACES.length) show(PLACES[0]);
+else render();
+</script>
