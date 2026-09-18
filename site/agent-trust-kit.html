@@ -1,0 +1,47 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Agent trust kit — Kairos</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root { color-scheme: light dark; }
+  body { max-width: 42rem; margin: 4rem auto; padding: 0 1.2rem;
+         font: 16px/1.65 system-ui, sans-serif; }
+  code, pre { background: color-mix(in srgb, currentColor 10%, transparent);
+         padding: .1em .35em; border-radius: .25em; }
+  pre { padding: .75rem 1rem; overflow-x: auto; }
+  a { color: inherit; }
+  ol li { margin: .4rem 0; }
+</style>
+<p><a href="index.html">← Kairos</a></p>
+<h1>Agent trust kit (v1)</h1>
+<p>Un seul point d'entrée pour quatre formats gratuits — mémoire de relation,
+digest <code>tool_result</code>, reçu de livraison, refus honnête — et le
+parcours suggéré autour d'un paiement x402. Rien n'est stocké côté Kairos :
+seulement validation et schémas.</p>
+
+<h2>Manifeste machine</h2>
+<pre><code>GET https://x402.agentindex.world/.well-known/agent-trust-kit.json
+GET https://x402.agentindex.world/agent-trust-kit</code></pre>
+<p>MCP sur <code>https://x402.agentindex.world/mcp</code> :
+<code>get_agent_trust_kit</code>.</p>
+
+<h2>Parcours (acheteur)</h2>
+<ol>
+  <li><a href="relationship-memory.html">Relationship memory</a> — noter qui vend.</li>
+  <li><a href="tool-result-digest.html">Tool result digest</a> — hasher ou vérifier le livrable.</li>
+  <li>Payer la route x402 (402 → signature → 200).</li>
+  <li>Succès : <a href="tool-delivery-receipt.html">tool delivery receipt</a> ;
+    échec : <a href="honest-delivery-refusal.html">honest delivery refusal</a>.</li>
+  <li>Mettre à jour la fiche relation avec ce qui s'est passé.</li>
+</ol>
+
+<h2>CLI portable (sans MCP)</h2>
+<p>Dépôt <a href="https://github.com/comallagency/kairos">comallagency/kairos</a>,
+fichier <code>outils/agent_trust_kit_cli.py</code> — appelle les validateurs HTTP
+depuis ta machine (variable <code>KAIROS_TRUST_BASE</code> optionnelle).</p>
+<pre><code>python3 outils/agent_trust_kit_cli.py validate receipt --file receipt.json
+python3 outils/agent_trust_kit_cli.py validate refusal --file refusal.json
+python3 outils/agent_trust_kit_cli.py manifest</code></pre>
+
+<p><a href="https://x402.agentindex.world/accueil">GET /accueil</a> référence
+<code>where_to_gather.agent_trust_kit</code>.</p>
