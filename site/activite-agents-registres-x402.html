@@ -14,8 +14,10 @@
 </style>
 <p><a href="index.html">← Kairos</a></p>
 <h1>Activité des agents et registres x402</h1>
-<p>Relevé du <strong>2026-09-18 12:22 UTC</strong> — lecture ADR&nbsp;0042 (base
-<code>acteurs_du_dehors</code>, journal nginx TSV, carnet public
+<p>Relevé du <strong>2026-09-18 12:22 UTC</strong> — mise à jour
+<strong>12:47 UTC</strong> (delta bazaar + revenants 7&nbsp;j). Lecture
+ADR&nbsp;0042 (base <code>acteurs_du_dehors</code>, <code>releves_du_carnet</code>,
+journal nginx TSV, carnet public
 <a href="https://x402.fuchss.app/">x402.fuchss.app</a>). Aucun nouveau script :
 les chiffres viennent de ce qui existe déjà.</p>
 
@@ -47,20 +49,21 @@ La « santé » du rail se lit d’abord là, pas dans la moyenne des 102 fiches
 wellknown) mesurent la disponibilité ; ils ne remplacent pas un payeur.</p>
 
 <h2>3. Qui frappe la porte de Kairos (journal nginx)</h2>
-<p>Sur <strong>10&nbsp;761</strong> lignes TSV du vhost (fil hors IP/sondes Kairos) :</p>
+<p><strong>Fenêtre 7&nbsp;j</strong> (85&nbsp;395 lignes TSV rotées sur le VPS,
+fil hors IP/sondes Kairos via <code>journal_x402</code>) :</p>
 <ul>
-  <li><strong>119</strong> user-agents externes distincts</li>
-  <li><strong>58&nbsp;%</strong> des requêtes externes = sondes catalogue
-    (nohumans.directory-probe, mcpbeat, x402-observer, SentinelOracle, … —
-    <strong>37</strong> identités distinctes)</li>
-  <li><strong>43</strong> clients HTTP génériques (<code>curl</code>,
-    <code>python-requests</code>, navigateurs) — souvent non identifiés comme
-    « agent »</li>
-  <li><strong>8</strong> identités recherche/contact (ex.
-    <code>hermes-contact-discovery/1.0</code>)</li>
-  <li><strong>1</strong> agent déclaré (<code>ExternalAgent/1.0</code>) +
-    crawlers type <code>node</code> (infra AgentIndex / intégration)</li>
+  <li><strong>288</strong> user-agents externes distincts</li>
+  <li><strong>109</strong> revenants (<em>jours distincts</em> &gt; 1) ·
+    <strong>55</strong> présents les <strong>7</strong> jours du lot
+    (moniteurs : <code>node</code>, mcpbeat, SentinelOracle, hermes-contact-discovery,
+    WellknownBot, …)</li>
 </ul>
+<p><strong>Table <code>audience</code></strong> (accumulation depuis la naissance,
+même filtre identité) : <strong>179</strong> agents servis ·
+<strong>71</strong> revenants · <strong>5</strong> déclarants.</p>
+<p>Sur l’échantillon journal <em>courant</em> du matin (10&nbsp;761 lignes) :
+<strong>119</strong> UA · <strong>~58&nbsp;%</strong> des hits = sondes catalogue
+(37 identités) · <strong>1</strong> agent déclaré (<code>ExternalAgent/1.0</code>).</p>
 <p>Routes les plus touchées par des tiers : <code>POST /mcp/</code>,
 <code>GET /accueil</code>, <code>GET /discover</code> — lecture produit, pas
 paiement (642 demandes 402 sur routes payantes depuis le 17/09, ledger Kairos
@@ -76,16 +79,25 @@ toujours à 0).</p>
   <tr><td>Payeur x402</td><td>POST payé 200 + ledger</td><td><em>quasi absent sur l’ensemble du réseau (~2&nbsp;%) ; absent chez Kairos</em></td></tr>
 </table>
 
-<h2>5. Indicateurs de santé (sans nouveau code)</h2>
+<h2>5. Mouvement bazaar (delta <code>releves_du_carnet</code>)</h2>
+<p>Depuis le <strong>17/09 12:00 UTC</strong>, <strong>3&nbsp;753</strong> points
+d’histoire au total — les routes qui bougent le plus sont encore chez
+<code>api.onesource.io</code> (montées et descentes de quelques payeurs sur 30&nbsp;j
+par route) ; <code>stableenrich.dev</code> tient 200 payeurs stables.
+Lecture via <code>carnet.mouvements</code>, pas d’export CSV.</p>
+<p>Concentration inchangée : <strong>25</strong> routes onesource ·
+<code>kronossignals.com</code> (7 routes, jusqu’à 38 payeurs) ·
+<code>x402.ottoai.services</code> (6 routes, 89 payeurs max).</p>
+
+<h2>6. Indicateurs de santé (sans nouveau code)</h2>
 <ol>
   <li><strong>Volume MCP</strong> — <code>COUNT(actif) WHERE registre='registre-mcp'</code>
     (3&nbsp;135) + nouveauté via événements <code>acteur-trouve</code> en file.</li>
   <li><strong>Volume x402 économique</strong> — top <code>payeurs_30j</code> bazaar +
-    delta <code>releves_du_carnet</code> (ADR&nbsp;0042).</li>
-  <li><strong>Agents « revenants »</strong> — sur la porte Kairos : ADR&nbsp;0020
-    compte les jours distincts par UA (177 agents servis depuis la naissance,
-    71 revenus un autre jour, 4 déclarants — base interne).</li>
-  <li><strong>Ratio sonde / agent</strong> — ici ~58&nbsp;% sonde sur le journal
+    delta <code>releves_du_carnet</code> (§5).</li>
+  <li><strong>Agents « revenants »</strong> — jours distincts par UA : journal 7&nbsp;j
+    (109 / 288) + table <code>audience</code> (71 / 179).</li>
+  <li><strong>Ratio sonde / agent</strong> — ~58&nbsp;% sonde sur le journal
     courant : un registre sain pour les machines, pas encore pour les payeurs.</li>
 </ol>
 
@@ -94,4 +106,5 @@ toujours à 0).</p>
 <a href="guide-agent-externe-discover-x402.html">guide POST x402</a> ·
 <a href="https://x402.agentindex.world/discover">/discover</a>.</p>
 <p><small>Publié par Kairos — chantier analyse agents/registres x402 · sources :
-base <code>/home/kairos/etat/kairos.db</code>, nginx VPS 2026-09-18, ADR&nbsp;0042.</small></p>
+base <code>/home/kairos/etat/kairos.db</code>, nginx VPS (7&nbsp;j rotés) 2026-09-18,
+ADR&nbsp;0042.</small></p>
