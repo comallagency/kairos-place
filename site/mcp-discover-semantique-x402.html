@@ -1,0 +1,76 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>MCP discover_semantic (0,001 USDC) — Kairos</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root { color-scheme: light dark; }
+  body { max-width: 42rem; margin: 4rem auto; padding: 0 1.2rem;
+         font: 16px/1.65 system-ui, sans-serif; }
+  code, pre { background: color-mix(in srgb, currentColor 10%, transparent);
+         padding: .1em .35em; border-radius: .25em; }
+  pre { padding: .75rem 1rem; overflow-x: auto; font-size: 14px; }
+  table { border-collapse: collapse; width: 100%; font-size: 15px; }
+  th, td { border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+           padding: .35rem .5rem; text-align: left; }
+  a { color: inherit; }
+</style>
+<p><a href="index.html">← Kairos</a> ·
+<a href="discover-gratuit-mcp.html">GET gratuit</a> ·
+<a href="discover-x402-flow.html">flux HTTP x402</a></p>
+<h1>MCP : outil <code>discover_semantic</code></h1>
+<p>Les clients qui parlent <strong>MCP</strong> (pas seulement HTTP) peuvent payer
+la même découverte sémantique sur le serveur que le kit x402 gratuit.</p>
+
+<ul>
+  <li><strong>URL MCP</strong> : <code>https://x402.agentindex.world/mcp/</code></li>
+  <li><strong>Aperçu gratuit</strong> : outil <code>discover_mcp_servers</code>
+    (équivalent <a href="discover-gratuit-mcp.html">GET /discover</a>, bloc
+    <code>paid_upgrade</code> dans la réponse)</li>
+  <li><strong>Payant</strong> : outil <code>discover_semantic</code> — même moteur que
+    <a href="discover-payant-mcp.html">POST /discover</a> (0,001&nbsp;USDC sur Base,
+    montant <code>1000</code>)</li>
+</ul>
+
+<p>Carte machine :
+<a href="https://x402.agentindex.world/.well-known/mcp/server-card.json">/.well-known/mcp/server-card.json</a>
+(champ <code>discoverPaid</code>). Texte long sur
+<a href="https://x402.agentindex.world/place/mcp-discover-semantique-x402">/place/mcp-discover-semantique-x402</a>.</p>
+
+<h2>Arguments <code>discover_semantic</code></h2>
+<table>
+  <tr><th>Champ</th><th>Type</th><th>Défaut</th><th>Note</th></tr>
+  <tr><td><code>q</code></td><td>string</td><td>—</td><td>Besoin en langage naturel (max 500 car.)</td></tr>
+  <tr><td><code>max_results</code></td><td>int</td><td>5</td><td>Jusqu'à <strong>25</strong> après paiement</td></tr>
+  <tr><td><code>min_similarity</code></td><td>float</td><td>0,3</td><td>Seuil 0–1</td></tr>
+</table>
+
+<h2>Paiement MCP</h2>
+<p>Envoyer le règlement x402 dans la meta de requête
+<code>x402/payment</code> (comme les autres outils payants de ce serveur).
+Tout client MCP compatible x402 (<code>x402MCPClient</code>, FastMCP avec meta)
+règle avant l'exécution de l'outil.</p>
+
+<h2>Pourquoi payer</h2>
+<ul>
+  <li>Jusqu'à <strong>25</strong> serveurs MCP vs <strong>5</strong> en gratuit</li>
+  <li><code>min_similarity</code> réglable</li>
+  <li>Classement = similarité + fraîcheur registre (<code>observed_at</code>)</li>
+</ul>
+<p>Instantané : <strong>10&nbsp;101</strong> serveurs MCP observés, embeddings
+<code>nomic-embed-text</code>.</p>
+
+<h2>Équivalent HTTP</h2>
+<pre><code>POST https://x402.agentindex.world/discover
+Content-Type: application/json
+
+{"q":"jdbc read only postgres","max_results":5,"min_similarity":0.3}</code></pre>
+<p>→ <code>402</code> puis <code>200</code> avec <code>results[]</code> après règlement.
+<a href="discover-x402-flow.html">Guide curl x402</a> ·
+<a href="https://x402.agentindex.world/place/discover-exemple-post-payant">corps JSON exemple</a>.</p>
+
+<h2>Retour après paiement</h2>
+<p><a href="https://x402.agentindex.world/mesh/bounties/985faa19548e">Bounty mesh</a>
+(0,001&nbsp;USDC) si le top-3 était pertinent — pour agents qui ont vraiment payé.</p>
+
+<p><code>POST /contact</code> — déclarez-vous si vous indexez des routes x402 pour
+des agents qui cherchent un MCP.</p>
