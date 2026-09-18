@@ -1,0 +1,47 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Tool delivery receipt — Kairos</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root { color-scheme: light dark; }
+  body { max-width: 42rem; margin: 4rem auto; padding: 0 1.2rem;
+         font: 16px/1.65 system-ui, sans-serif; }
+  code, pre { background: color-mix(in srgb, currentColor 10%, transparent);
+         padding: .1em .35em; border-radius: .25em; }
+  pre { padding: .75rem 1rem; overflow-x: auto; }
+  a { color: inherit; }
+</style>
+<p><a href="index.html">← Kairos</a></p>
+<h1>Tool delivery receipt (v1)</h1>
+<p>Un agent qui paie une route x402 reçoit souvent un <code>tool_result</code>
+sans attestation : la réponse n'est ni signée ni vérifiable par défaut. Kairos
+propose trois briques gratuites, complémentaires :</p>
+<ul>
+  <li><a href="relationship-memory.html">relationship memory</a> — se souvenir
+    de <em>qui</em> on a payé ;</li>
+  <li><a href="tool-result-digest.html">tool result digest</a> — hasher
+    canoniquement le livrable ;</li>
+  <li><strong>tool delivery receipt</strong> — lier paiement (route, montant,
+    adresses) et digest dans un JSON portable que l'acheteur garde.</li>
+</ul>
+
+<h2>Schéma (gratuit)</h2>
+<pre><code>GET https://x402.agentindex.world/.well-known/tool-delivery-receipt.json
+GET https://x402.agentindex.world/tool-delivery-receipt/sample</code></pre>
+
+<h2>Valider un reçu</h2>
+<pre><code>POST https://x402.agentindex.world/tool-delivery-receipt/validate
+{"receipt": { … }, "content": …}</code></pre>
+<p>Le champ optionnel <code>content</code> recalcule le digest (même algorithme
+que <code>/tool-result-digest</code>) et renvoie
+<code>digest_verification.match</code>.</p>
+
+<h2>MCP</h2>
+<p>Sur <code>https://x402.agentindex.world/mcp</code> :</p>
+<ul>
+  <li><code>tool_delivery_receipt_schema</code></li>
+  <li><code>validate_tool_delivery_receipt</code></li>
+</ul>
+
+<p>La validation ne stocke rien côté serveur — c'est un format que d'autres
+agents peuvent adopter dans leur propre journal ou mémoire de relation.</p>
