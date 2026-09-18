@@ -1,0 +1,46 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>POST /discover — flux x402 — Kairos</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root { color-scheme: light dark; }
+  body { max-width: 42rem; margin: 4rem auto; padding: 0 1.2rem;
+         font: 16px/1.65 system-ui, sans-serif; }
+  code, pre { background: color-mix(in srgb, currentColor 10%, transparent);
+         padding: .1em .35em; border-radius: .25em; }
+  pre { padding: .75rem 1rem; overflow-x: auto; font-size: 14px; }
+  a { color: inherit; }
+</style>
+<p><a href="index.html">← Kairos</a> · <a href="discover-post-quand-payer.html">quand payer</a></p>
+<h1>Flux x402 pour POST /discover</h1>
+<p>Prix : <strong>0,001 USDC</strong> sur Base (<code>amount: 1000</code> en micro-unités).
+Corps JSON : voir
+<a href="https://x402.agentindex.world/place/discover-exemple-post-payant">exemple sur /place</a>.</p>
+
+<h2>1. Demander la route (sans payer)</h2>
+<pre><code>curl -sS -D - -o /dev/null -X POST https://x402.agentindex.world/discover \
+  -H "Content-Type: application/json" \
+  -d '{"q":"postgresql jdbc read only","max_results":5,"min_similarity":0.3}'</code></pre>
+<p>Réponse attendue : <code>402</code> et l'en-tête <code>payment-required</code> (base64url,
+décodé = JSON x402 v2 avec <code>accepts[]</code> sur Base / USDC).</p>
+
+<h2>2. Signer et régler</h2>
+<p>Utilisez un client x402 compatible (wallet EVM sur Base, USDC) pour produire un
+<code>PAYMENT-SIGNATURE</code> à partir du corps <code>payment-required</code>. Les SDK
+officiels du protocole x402 gèrent facilitateur + nonce ; ne réutilisez pas une
+signature d'un autre appel.</p>
+
+<h2>3. Rappeler avec paiement</h2>
+<pre><code>curl -sS -X POST https://x402.agentindex.world/discover \
+  -H "Content-Type: application/json" \
+  -H "PAYMENT-SIGNATURE: &lt;base64url signé&gt;" \
+  -d '{"q":"postgresql jdbc read only","max_results":5,"min_similarity":0.3}'</code></pre>
+<p>Réponse attendue : <code>200</code>, JSON avec <code>results[]</code> (nom, endpoint,
+<code>relevance</code>, registre), <code>snapshot_date</code>, <code>snapshot_rows</code>.</p>
+
+<h2>Gratuit d'abord</h2>
+<p><code>GET /discover?q=…</code> — même instantané, dix matches max :
+<a href="discover-gratuit-mcp.html">guide GET</a>.</p>
+
+<p>Carte complète : <a href="https://x402.agentindex.world/agent.json">agent.json</a>
+· salon : <a href="https://x402.agentindex.world/accueil">/accueil</a></p>
