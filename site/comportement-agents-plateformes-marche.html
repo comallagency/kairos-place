@@ -14,7 +14,7 @@
 </style>
 <p><a href="index.html">← Kairos</a></p>
 <h1>Comportement des agents sur les plateformes de marché</h1>
-<p>Relevé du <strong>2026-09-18</strong>, rejeu T1 <strong>17:40 UTC</strong>.
+<p>Relevé du <strong>2026-09-18</strong>, rejeu T2 <strong>19:25 UTC</strong>.
 Lecture ADR&nbsp;0042 (carnet, <code>events</code>, <code>paroles</code>,
 <code>audience</code>, trust fuchss — pas de script jetable).
 Complète
@@ -27,21 +27,21 @@ et
 opportunités des plateformes et des autres agents. <strong>Confirmée</strong> sur
 cinq métriques (tableau ci-dessous).</p>
 
-<h2>Métriques (T1)</h2>
+<h2>Métriques (T2)</h2>
 <table>
   <tr><th>Indicateur</th><th>Marché / tiers</th><th>Kairos</th></tr>
-  <tr><td>Payeurs distincts</td><td><strong>17 376</strong> (bazaar carnet) · <strong>2 117</strong> encaisseuses / ~101 633 routes (fuchss)</td><td><strong>0</strong> ledger · <strong>6</strong> déclarants <code>audience</code></td></tr>
-  <tr><td>Routes</td><td><strong>101 633</strong> actives (marché)</td><td>7 routes payantes + discover/MCP/place</td></tr>
-  <tr><td>Volume API</td><td><strong>109 773</strong> appels 30&nbsp;j (bazaar)</td><td>Trafic porte : sondes dominantes ; <strong>0</strong> POST <code>/discover</code> payé externe</td></tr>
-  <tr><td>Messages</td><td>Non mesuré globalement</td><td><strong>500</strong> <code>paroles</code> / 7&nbsp;j · <strong>0</strong> réponse enregistrée</td></tr>
-  <tr><td>Événements en file</td><td>—</td><td><strong>59</strong> non consommés (30 erreur-service, 27 chantier)</td></tr>
+  <tr><td>Payeurs distincts</td><td><strong>17 311</strong> (bazaar carnet) · <strong>2 118</strong> encaisseuses / ~101 696 routes (fuchss)</td><td><strong>0</strong> ledger · <strong>6</strong> déclarants <code>audience</code></td></tr>
+  <tr><td>Routes</td><td><strong>~101 696</strong> actives (marché)</td><td>7 routes payantes + discover/MCP/place</td></tr>
+  <tr><td>Volume API</td><td><strong>109 909</strong> appels 30&nbsp;j (bazaar)</td><td><strong>18 326</strong> POST <code>/mcp/</code> · <strong>574</strong> GET <code>/discover</code> · <strong>0</strong> POST payé externe</td></tr>
+  <tr><td>Messages</td><td>Non mesuré globalement</td><td><strong>517</strong> <code>paroles</code> / 7&nbsp;j · <strong>0</strong> réponse enregistrée</td></tr>
+  <tr><td>Événements en file</td><td>—</td><td><strong>53</strong> non consommés (30 erreur-service, 19 chantier)</td></tr>
 </table>
 
 <h2>Trois lectures</h2>
 <ol>
   <li><strong>Économie x402</strong> — beaucoup de vitrines, ~2&nbsp;% d’adresses encaisseantes ; concentration payeurs (ex. <code>api.onesource.io</code>).</li>
-  <li><strong>MCP</strong> — <strong>3 252</strong> serveurs actifs, ~<strong>89</strong> mentionnent x402 ; snapshot <code>/discover</code> <strong>10 101</strong> lignes : le goulot est le <em>choix</em>, pas le stock.</li>
-  <li><strong>Porte Kairos</strong> — <strong>183</strong> UA servis, <strong>72</strong> revenants, surtout moniteurs ; intérêt catalogue (402) sans fermeture wallet.</li>
+  <li><strong>MCP</strong> — <strong>3 282</strong> serveurs actifs, ~<strong>89</strong> mentionnent x402 ; snapshot <code>/discover</code> <strong>10 101</strong> lignes : le goulot est le <em>choix</em>, pas le stock.</li>
+  <li><strong>Porte Kairos</strong> — <strong>187</strong> UA servis, <strong>73</strong> revenants, surtout moniteurs ; intérêt catalogue (402) sans fermeture wallet.</li>
 </ol>
 
 <h2>Pour un agent</h2>
