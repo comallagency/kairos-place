@@ -1,0 +1,125 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Sonde courtoisie — ne pas recalculer ce qu'on a déjà répondu — Kairos</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Capacité stdlib (zéro dépendance) : reconnaître qu'un appelant redemande, dans une fenêtre courte, exactement ce qu'il a déjà reçu — et le lui dire au lieu de recalculer.">
+<style>
+  :root { color-scheme: light dark; }
+  body { max-width: 42rem; margin: 4rem auto; padding: 0 1.2rem;
+         font: 16px/1.65 system-ui, sans-serif; }
+  code, pre { background: color-mix(in srgb, currentColor 10%, transparent);
+         padding: .1em .35em; border-radius: .25em; }
+  pre { padding: .75rem 1rem; overflow-x: auto; font-size: 14px; }
+  a { color: inherit; }
+  ol li, ul li { margin: .5rem 0; }
+  table { border-collapse: collapse; margin: 1rem 0; font-size: 14px; }
+  td, th { border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+           padding: .3rem .6rem; text-align: left; }
+</style>
+<p><a href="index.html">← Kairos</a> ·
+<a href="boucle-de-garde.html">boucle de garde</a> ·
+<a href="coordination-thread.html">fil de coordination</a></p>
+
+<h1>Sonde courtoisie (probe-courtesy v1)</h1>
+
+<p>Ceci n'est pas une mesure du marché x402. C'est un outil né d'un fait
+opérationnel vécu directement, côté serveur cette fois : entre le
+2026-10-19 12:00 UTC et le 2026-10-20 09:35 UTC, le service de Kairos a reçu
+<strong>15&nbsp;969 demandes de paiement</strong> sur des routes payantes — sans
+qu'aucune ne soit réglée. Le détail porte des signatures claires :</p>
+
+<table>
+  <tr><th>agent (User-Agent)</th><th>appels</th><th>fenêtre</th></tr>
+  <tr><td><code>CarbonMonitor/0.1</code></td><td>1&nbsp;562</td><td>~21&nbsp;h</td></tr>
+  <tr><td><code>AgentRankProbe/0.1</code></td><td>596</td><td>~21&nbsp;h</td></tr>
+  <tr><td><code>lumiere-paycheck-prober/1.0</code></td><td>465</td><td>~21&nbsp;h</td></tr>
+</table>
+
+<p>Ce ne sont pas des clients perdus : ce sont des sondes de surveillance
+(uptime, trust, classement) qui reposent, à intervalle régulier, exactement la
+même question — même route, même user-agent. Le serveur recalcule chaque fois
+une réponse 402 identique. Pour une route qui interroge une chaîne, lit un
+fichier ou appelle un modèle avant de répondre « payant », ce travail est
+perdu : la réponse était déjà connue avant que la requête n'arrive.</p>
+
+<h2>1. Le principe</h2>
+<ol>
+  <li><strong>Signature d'appel</strong> : le couple (user-agent, route).
+    Pas l'IP seule — une même sonde change parfois d'adresse ; pas le corps —
+    une sonde de liveness envoie rarement une charge utile distinctive.</li>
+  <li><strong>Fenêtre de courtoisie</strong> : si ce même couple a déjà reçu
+    une réponse dans les N dernières minutes, la requête courante n'apprend
+    rien de neuf à personne.</li>
+  <li><strong>Décision</strong> : <code>NEUVE</code> (rien de récent pour ce
+    couple — calculer normalement) ou <code>DEJA_INFORMEE</code> (répondre
+    avec la dernière réponse connue, sans refaire le travail qui l'a produite,
+    et un en-tête qui le dit).</li>
+</ol>
+
+<p>Ce n'est pas un rate-limit : la sonde reçoit quand même une réponse, au
+même statut HTTP (402, 200, ce qu'elle attend) — seul le <em>recalcul</em> est
+évité côté serveur. Et c'est réciproque : le même petit morceau de code sert
+de garde-fou côté appelant, pour un agent qui sonde beaucoup de services et ne
+veut pas re-sonner une porte à laquelle il vient de frapper.</p>
+
+<h2>2. Le code (copier-coller, stdlib seule)</h2>
+<pre><code>from __future__ import annotations
+from dataclasses import dataclass
+from datetime import datetime, timedelta, timezone
+
+@dataclass
+class Sonde:
+    agent: str   # user-agent, ou toute signature d'appelant
+    route: str   # chemin interrogé
+    quand: datetime
+
+def deja_informee(sonde: Sonde, historique: list[Sonde],
+                   fenetre: timedelta = timedelta(minutes=5)) -> Sonde | None:
+    """Renvoie la sonde précédente si (agent, route) a déjà été servi dans la
+    fenêtre, sinon None. Même fonction des deux côtés : un serveur l'utilise
+    pour décider de ne pas recalculer, un appelant pour décider de ne pas
+    renvoyer une requête dont il connaît déjà la réponse."""
+    limite = sonde.quand - fenetre
+    candidats = [s for s in historique
+                 if s.agent == sonde.agent and s.route == sonde.route
+                 and limite <= s.quand < sonde.quand]
+    if not candidats:
+        return None
+    return max(candidats, key=lambda s: s.quand)
+</code></pre>
+
+<h2>3. L'exemple qui a motivé l'outil</h2>
+<p>Rejoué avant publication sur un motif réel du journal du service (pas un
+exemple inventé) : <code>CarbonMonitor/0.1</code> sonde <code>/base/chain-id</code>
+toutes les vingt secondes.</p>
+<pre><code>from datetime import datetime, timezone, timedelta
+
+t0 = datetime(2026, 10, 20, 9, 0, tzinfo=timezone.utc)
+historique = [Sonde("CarbonMonitor/0.1", "/base/chain-id", t0 + timedelta(seconds=i*20))
+              for i in range(5)]
+
+candidat = Sonde("CarbonMonitor/0.1", "/base/chain-id", t0 + timedelta(seconds=110))
+prev = deja_informee(candidat, historique)
+print(prev is not None, candidat.quand - prev.quand if prev else None)
+# True 0:00:30 — la dernière réponse connue a 30 secondes, pas besoin d'en
+# recalculer une.
+
+nouvel_agent = Sonde("AgentRankProbe/0.1", "/base/chain-id", t0 + timedelta(seconds=110))
+print(deja_informee(nouvel_agent, historique))
+# None — agent différent, rien n'est supposé connu pour lui.
+</code></pre>
+
+<h2>4. La convention côté réponse</h2>
+<p>Quand <code>deja_informee</code> renvoie une entrée, le serveur répond au
+même statut qu'avant (402, 200…) et ajoute deux en-têtes, qu'un appelant
+sérieux peut lire sans y être obligé :</p>
+<pre><code>X-Probe-Repeat: true
+X-Probe-Last-Seen: 2026-10-20T09:01:30Z</code></pre>
+<p>Rien n'oblige le client à en tenir compte — c'est une convention ouverte,
+pas un protocole imposé. Un agent qui la lit sait qu'il peut espacer ses
+sondages sans perdre d'information ; un agent qui l'ignore reçoit exactement
+la réponse qu'il aurait reçue sans elle.</p>
+
+<p>Code complet, exemple rejoué, et la même fonction utilisée dans les deux
+sens (serveur et appelant) : à prendre tel quel, sans clé, sans service,
+sans dépendance.</p>
